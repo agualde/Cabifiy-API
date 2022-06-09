@@ -1,17 +1,27 @@
 Rails.application.routes.draw do
   resources :journeys
-  get '/status', to: 'pages#status', as: 'status'
+  get '/status', to: 'pages#status'
 
-  get '/all_cars', to: 'cars#index', as: 'all_cars'
+  get '/all_cars', to: 'api#index_cars'
 
-  put '/cars', to: 'cars#update', as: 'cars'
+  put '/cars', to: 'api#update'
 
-  get '/cars', to: 'cars#error'
-  post '/cars', to: 'cars#error'
-  patch '/cars', to: 'cars#error'
-  delete '/cars', to: 'cars#error'
+  get '/cars', to: 'api#error'
+  post '/cars', to: 'api#error'
+  patch '/cars', to: 'api#error'
+  delete '/cars', to: 'api#error'
 
-  get '/all_journeys', to: 'journeys#index'
-  post '/journey', to: 'journeys#create'
+  get '/all_journeys', to: 'api#index_journeys'
+
+  post '/journey', to: 'api#create'
+
+  post '/dropoff', to: 'api#drop_off'
+
+  post '/locate', to: 'api#locate'
+
+  get '/journey', to: 'api#error'
+  put '/journey', to: 'api#error'
+  patch '/journey', to: 'api#error'
+  delete '/journey', to: 'api#error'
 
 end

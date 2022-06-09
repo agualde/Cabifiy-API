@@ -3,12 +3,12 @@ class CarsController < ApplicationController
   
   def index
     @cars = Car.all 
-    render json: @cars, only: [:id, :seats]
+    render json: @cars
   end
-
 
   def update
     Car.destroy_all
+    Journey.destroy_all
     if Car.create(car_params) 
       render status: 200
     end
@@ -16,8 +16,23 @@ class CarsController < ApplicationController
       render status: 400
   end
 
-  def error
-    render status: 400
+
+
+
+  def create
+    journey = Journey.new(id: journey_params["id"], people: journey_params["people"])
+    if journey.valid?
+      if journey.save
+        
+        render status: 200
+      else
+        render status: 400     
+      end
+    else
+      render status: 400
+    end
+    rescue 
+      render status: 400
   end
 
   private
