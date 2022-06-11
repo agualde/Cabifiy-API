@@ -6,44 +6,25 @@ class ApiController < ApplicationController
 
   def update    
     cars_to_hash
+
     @@queues = [[],[],[],[],[],[]]
+
     @@active_trips = []
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Available cars:"
-    p @@available_cars
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Active trips:"
-    p @@active_trips
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Queues:"
-    p @@queues
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------" 
+
     render status: 200
   end
   
   def create
-    
     @journey = {
       id: journey_params["id"],
       people: journey_params["people"]
     }
 
     if_car_available(@journey)
-    
   end
 
 
   def drop_off
-
-
     group_id = params["ID"].to_i
 
     @@active_trips.each do |trip|
@@ -83,20 +64,69 @@ class ApiController < ApplicationController
     puts "---------------------"
     puts "---------------------" 
 
+    @wait_list = []
+    
+    @@queues.each do |queue|
+      if queue.first && queue.first[:people] <= @found_car[:available_seats]
+        @wait_list << queue.first
+      end
+    end
+      
+      wait_times =  @wait_list.collect { |x| x[:time] }
+      
+      wait_times.sort
+      
+      longest_time = wait_times.first 
+      
+      @wait_list.each do |group|
+        if group[:time] == longest_time
+          @longest_waiting_group_that_fits_in_car = group
+
+          @@queues.each do |queue|
+            if queue.first == @longest_waiting_group_that_fits_in_car
+              queue.shift
+            end
+          end
+        end
+      end
+    
+    if_car_available(@longest_waiting_group_that_fits_in_car)
+
+    puts "---------------------"
+    puts "---------------------"
+    puts "---------------------"
+    puts "Available cars:"
+    p @@available_cars
+    puts "---------------------"
+    puts "---------------------"
+    puts "---------------------"
+    puts "Active trips:"
+    p @@active_trips
+    puts "---------------------"
+    puts "---------------------"
+    puts "---------------------"
+    puts "Queues:"
+    p @@queues
+    puts "---------------------"
+    puts "---------------------"
+    puts "---------------------" 
 
   end
 
   def locate
     car_id = params["ID"].to_i
+
     @@active_trips.each do |trip|
       if trip.keys == [car_id]
         @found_car = trip[car_id][:car]
       end
     end
+    
     car = {
       id: @found_car[:id],
       seats: @found_car[:seats]
     }   
+
     render json: car
   end
 
@@ -118,19 +148,16 @@ class ApiController < ApplicationController
 
   def if_car_available(journey)
     @@riding = false
-    puts "Available cars:"
-    p @@available_cars
+
     for i in (journey[:people]..6)
- 
-      
+
       if @@available_cars[i].present? 
-        
+
         car = @@available_cars[i].first
-        
+
         @@available_cars[i].delete(car[0])
-        
+
         car[1][:available_seats] = car[1][:available_seats] - journey[:people]
-        
 
         @@available_cars[car[1][:available_seats]][car[1][:id]] = {
           id: car[1][:id],
@@ -138,7 +165,6 @@ class ApiController < ApplicationController
           available_seats: car[1][:available_seats]
         }
 
-        
         hash = {}
 
         hash[journey[:id]] = {
@@ -169,35 +195,35 @@ class ApiController < ApplicationController
         @@riding = true
         render status: 200
         break
+      end
     end
-  end
 
-  if @@riding == false
-    journey_queue(@journey)
-    puts "QUEUE FORMED"
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Available cars:"
-    p @@available_cars
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Active trips:"
-    p @@active_trips
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Queues:"
-    p @@queues
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------" 
-    render status: 200
-  end
-  
-  
-  
+    if @@riding == false
+
+      journey_queue(@journey)
+
+      puts "QUEUE FORMED"
+      puts "---------------------"
+      puts "---------------------"
+      puts "---------------------"
+      puts "Available cars:"
+      p @@available_cars
+      puts "---------------------"
+      puts "---------------------"
+      puts "---------------------"
+      puts "Active trips:"
+      p @@active_trips
+      puts "---------------------"
+      puts "---------------------"
+      puts "---------------------"
+      puts "Queues:"
+      p @@queues
+      puts "---------------------"
+      puts "---------------------"
+      puts "---------------------" 
+
+      render status: 200
+    end
   end
 
   def cars_to_hash
