@@ -10,6 +10,22 @@ class CarsController < ApplicationController
     Car.destroy_all
     Journey.destroy_all
     if Car.create(car_params) 
+
+      puts "-------------------------------------"
+      puts "-------------------------------------"
+      puts "-------------------------------------"
+      puts @available_cars[4].values
+      puts "-------------------------------------"
+      puts @available_cars[4].values.first
+      puts "-------------------------------------"
+      puts @available_cars[4].values.first[:id]
+      puts "-------------------------------------"
+      puts @available_cars[4].values.first[:available_seats]
+      puts "-------------------------------------"
+      puts @available_cars
+
+
+
       render status: 200
     end
     rescue  
