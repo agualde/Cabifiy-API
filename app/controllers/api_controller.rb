@@ -76,9 +76,9 @@ class ApiController < ApplicationController
 
     @@available_cars[@found_car[:available_seats]].delete(@found_car[:id])
 
-    new_available_seats = @found_car[:available_seats] + @journey[:people]
+    @new_available_seats = @found_car[:available_seats] + @journey[:people]
 
-    @found_car[:available_seats] = new_available_seats
+    @found_car[:available_seats] = @new_available_seats
 
     @@available_cars[@found_car[:available_seats]][@found_car[:id]] = {
       id: @found_car[:id],
@@ -87,13 +87,7 @@ class ApiController < ApplicationController
     }
 
 
-    @@active_trips.each do |active_trip_hash|
-
-      if active_trip_hash.values[0][:car][:id] == @found_car[:id]
-        active_trip_hash.values[0][:car][:available_seats] = new_available_seats
-      end
-
-    end
+    update_car_seats_in_active_rides_hash(@found_car)
 
     queue_state = false
        
@@ -194,35 +188,29 @@ class ApiController < ApplicationController
 
       if @@available_cars[i].present? 
 
-        car = @@available_cars[i].first
+        car = @@available_cars[i].first[1]
+        car_id = @@available_cars[i].first[0]
 
-        @@available_cars[i].delete(car[0])
+        @@available_cars[i].delete(car_id)
         
-        new_available_seats = car[1][:available_seats] - journey[:people]
+        @new_available_seats = car[:available_seats] - journey[:people]
 
-        car[1][:available_seats] = new_available_seats
+        car[:available_seats] = @new_available_seats
 
-        @@available_cars[car[1][:available_seats]][car[1][:id]] = {
-          id: car[1][:id],
-          seats: car[1][:seats],
-          available_seats: car[1][:available_seats]
+        @@available_cars[car[:available_seats]][car[:id]] = {
+          id: car[:id],
+          seats: car[:seats],
+          available_seats: car[:available_seats]
         }
 
         hash = {}
 
         hash[journey[:id]] = {
-          car: car[1],
+          car: car,
           journey: journey 
         }
 
-
-        @@active_trips.each do |active_trip_hash|
-
-          if active_trip_hash.values[0][:car][:id] == car[1][:id]
-            active_trip_hash.values[0][:car][:available_seats] = new_available_seats
-          end
-
-        end
+        update_car_seats_in_active_rides_hash(car)
 
         @@active_trips << hash
         
@@ -288,6 +276,14 @@ class ApiController < ApplicationController
             people: journey[:people],
             time: Time.now
           }
+      end
+    end
+  end
+
+  def update_car_seats_in_active_rides_hash(car)
+    @@active_trips.each do |active_trip_hash|
+      if active_trip_hash.values[0][:car][:id] == car[:id]
+        active_trip_hash.values[0][:car][:available_seats] = @new_available_seats
       end
     end
   end
