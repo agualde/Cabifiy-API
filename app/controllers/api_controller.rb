@@ -86,7 +86,6 @@ class ApiController < ApplicationController
       available_seats: @found_car[:available_seats]
     }
 
-
     update_car_seats_in_active_rides_hash(@found_car)
 
     queue_state = false
@@ -108,7 +107,7 @@ class ApiController < ApplicationController
           
           wait_times =  @wait_list.collect { |x| x[:time] }
           
-          wait_times.sort
+          wait_times = wait_times.sort
           
           longest_time = wait_times.first 
           
