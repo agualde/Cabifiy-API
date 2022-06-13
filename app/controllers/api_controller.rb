@@ -4,54 +4,70 @@ class ApiController < ApplicationController
     render status: 200
   end
 
-  def update   
-    reset_data_structures 
-
-    create_cars
-
-    get_info
-
-    render status: 200
+  def update  
+    if request.content_type == "application/json" 
+      begin
+        reset_data_structures 
+        create_cars
+        render json: { available_cars: @@available_cars, active_trips: @@active_trips, queues: @@queues } ,status: 200
+      rescue => exception
+        render status: 400
+      end
+    else
+      render status: 400
+    end
   end
   
   def create
-    @journey = {
-      id: journey_params["id"],
-      people: journey_params["people"]
-    }
-
-    find_car_for_group(@journey)
-
-    get_info
-
+    if request.content_type == "application/json"
+        @journey = {
+        id: journey_params["id"],
+        people: journey_params["people"]
+      }
+      find_car_for_group(@journey)
+      render json: { available_cars: @@available_cars, active_trips: @@active_trips, queues: @@queues } ,status: 200
+    else
+      render status: 400
+    end
   end
 
-
   def drop_off
-    group_id = params["ID"].to_i
-
-    generate_drop_off(group_id)
-
-    update_car_seats_in_active_rides_hash(@found_car)
-
-    if_group_waiting_find_them_car
-
-    get_info
-
+    if request.content_type == "application/x-www-form-urlencoded"
+      begin
+        group_id = params["ID"].to_i
+        generate_drop_off(group_id)
+        update_car_seats_in_active_rides_hash(@found_car)
+        if_group_waiting_find_them_car
+        render json: { available_cars: @@available_cars, active_trips: @@active_trips, queues: @@queues } ,status: 200
+      rescue => exception
+        render status: 404
+      end
+    else
+      render status: 400
+    end
   end
 
   def locate
-    car_id = params["ID"].to_i
-
-    find_car_from_group(car_id)
-
-    render json: @car
+    if request.content_type == "application/x-www-form-urlencoded"
+      begin
+        car_id = params["ID"].to_i
+        find_car_from_group(car_id)
+        if @car.nil?
+          render status: 204 
+        else
+          render json: @car
+        end
+      rescue => exception
+        render status: 400
+      end
+    else
+      render status: 400
+    end
   end
 
   def error
     render status: 400
   end
-
 
   private
 
@@ -79,18 +95,16 @@ class ApiController < ApplicationController
 
   def find_car_for_group(journey)
     @@riding = false
-
+    p journey
     for i in (journey[:people]..6)
 
       if @@available_cars[i].present? 
-
         car = @@available_cars[i].first[1]
         car_id = @@available_cars[i].first[0]
 
         @@available_cars[i].delete(car_id)
         
         @new_available_seats = car[:available_seats] - journey[:people]
-
         car[:available_seats] = @new_available_seats
 
         @@available_cars[car[:available_seats]][car[:id]] = {
@@ -100,30 +114,20 @@ class ApiController < ApplicationController
         }
 
         hash = {}
-
         hash[journey[:id]] = {
           car: car,
           journey: journey 
         }
 
         update_car_seats_in_active_rides_hash(car)
-
         @@active_trips << hash
-        
         @@riding = true
 
-        render status: 200
         break
       end
     end
-
     if @@riding == false
-
-      journey_queue(@journey)
-
-      get_info
-
-      render status: 200
+      journey_queue(journey)
     end
   end
 
@@ -161,7 +165,6 @@ class ApiController < ApplicationController
     @@available_cars[@found_car[:available_seats]].delete(@found_car[:id])
 
     @new_available_seats = @found_car[:available_seats] + @journey[:people]
-
     @found_car[:available_seats] = @new_available_seats
 
     @@available_cars[@found_car[:available_seats]][@found_car[:id]] = {
@@ -183,42 +186,33 @@ class ApiController < ApplicationController
     end
     
     if queue_state
-      
-      @@queues.each do |queue|
-        
-        wait_times =  @wait_list.collect { |x| x[:time] }
-        
-        wait_times = wait_times.sort
-        
-        longest_time = wait_times.first 
-        
-        @wait_list.each do |group|
-          if group[:time] == longest_time
-            @longest_waiting_group_that_fits_in_car = group
+      wait_times =  @wait_list.collect { |x| x[:time] }
+      longest_time = wait_times.sort.first 
+      @wait_list.each do |group|
+        if group[:time] == longest_time
+          @longest_waiting_group_that_fits_in_car = group
 
-            @@queues.each do |queue|
-              if queue.first == @longest_waiting_group_that_fits_in_car
-                queue.shift
-              end
+          @@queues.each do |queue|
+            if queue.first == @longest_waiting_group_that_fits_in_car
+              queue.shift
             end
           end
         end
       end
       find_car_for_group(@longest_waiting_group_that_fits_in_car)
-    end
+    end 
   end
 
   def find_car_from_group(car_id)
-    @@active_trips.each do |trip|
-      if trip.keys == [car_id]
+    @@active_trips.select do |trip|
+      if trip[car_id]
         @found_car = trip[car_id][:car]
+        @car = {
+          id: @found_car[:id],
+          seats: @found_car[:seats]
+        }   
       end
     end
-    
-    @car = {
-      id: @found_car[:id],
-      seats: @found_car[:seats]
-    }   
   end
 
   def journey_params
@@ -227,26 +221,5 @@ class ApiController < ApplicationController
 
   def car_params
     params.permit!["_json"]
-  end
-
-  def get_info
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Available cars:"
-    p @@available_cars
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Active trips:"
-    p @@active_trips
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------"
-    puts "Queues:"
-    p @@queues
-    puts "---------------------"
-    puts "---------------------"
-    puts "---------------------" 
   end
 end
