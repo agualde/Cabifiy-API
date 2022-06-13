@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :journeys
   get '/status', to: 'api#status'
 
   put '/cars', to: 'api#update'
@@ -19,5 +18,4 @@ Rails.application.routes.draw do
   put '/journey', to: 'api#error'
   patch '/journey', to: 'api#error'
   delete '/journey', to: 'api#error'
-
 end
