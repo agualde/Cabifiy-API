@@ -11,17 +11,4 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2022_06_08_214459) do
-
-  create_table "cars", force: :cascade do |t|
-    t.integer "seats"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "journeys", force: :cascade do |t|
-    t.integer "people"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
 end

@@ -95,7 +95,6 @@ class ApiController < ApplicationController
 
   def find_car_for_group(journey)
     @@riding = false
-    p journey
     for i in (journey[:people]..6)
 
       if @@available_cars[i].present? 
