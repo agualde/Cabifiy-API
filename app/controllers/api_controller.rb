@@ -1,79 +1,53 @@
 class ApiController < ApplicationController
+  include RedisInstance
+  before_action :"ensure_application/json_request", only: [:update, :create]
+  before_action :"ensure_application/x-www-form-urlencoded_request", only: [:drop_off, :locate]
+  before_action :check_journey_params, only: [:create]
+
   def status
     render status: 200
   end
 
-  def update  
-    if request.content_type == "application/json"
-      begin
-        reset_data_structures 
-        create_cars
-        if @all_cars_valid
-          render_out_data_and_status_200
-        else
-          render_400_status
-        end
-      rescue => exception
-        render_400_status
-      end
-    else
-      render_400_status
-    end
+  def update
+    service = Fleet::CarsService.new(car_params)
+    service.call
+
+    render_out_data_and_status_200
+    rescue => exception
+    render_400
   end
   
   def create
-    if request.content_type == "application/json" && journey_params["id"].is_a?(Integer) && journey_params["people"].is_a?(Integer)
-        hash = {
-        id: journey_params["id"],
-        people: journey_params["people"]
-      }
-      find_car_for_group(hash)
-
-      @@journeys[hash[:id]] = {
-        id: hash[:id],
-        people: hash[:people]
-      }
-      render_out_data_and_status_200
-    else
-      render_400_status
-    end
+    service = Rides::JourneyService.new(journey_params)
+    service.call
+    
+    render_out_data_and_status_200
+    rescue => exception
+    render_400
   end
 
   def drop_off
-    if request.content_type == "application/x-www-form-urlencoded"
-        group_id = params["ID"].to_i
-        generate_drop_off(group_id)
-        @running = true
-        while @running 
-          if_group_waiting_find_them_car
-          update_found_car
-        end
-        if @group_not_found
-          render status: 404
-        else
-        render_out_data_and_status_200
-        end
-    else
-      render_400_status
-    end
+    group_id = params["ID"].to_i
+    service = Rides::DropOffService.new(group_id)
+    service.call
+
+    return render status: 404 if @group_not_found
+      
+    render_out_data_and_status_200
   end
 
   def locate
-    if request.content_type == "application/x-www-form-urlencoded"
-      begin
-        group_id = params["ID"].to_i
-        find_car_from_group(group_id)
-        if @car
-          render json: @car
-        elsif @group_waiting_in_queue_to_be_processed
-          render status: 204
-        elsif @car.nil?
-          render status: 404
-        end
-      rescue => exception
-        render status: 400
+    begin
+      group_id = params["ID"].to_i
+      find_car_from_group(group_id)
+      if @car
+        render json: @car
+      elsif @group_waiting_in_queue_to_be_processed
+        render status: 204
+      elsif @car.nil?
+        render status: 404
       end
-    else
+    rescue => exception
       render status: 400
     end
   end
@@ -84,131 +58,10 @@ class ApiController < ApplicationController
 
   private
 
-  def reset_data_structures
-    @@available_cars = [{},{},{},{},{},{},{}]
-    @@queues = [[],[],[],[],[],[]]
-    @@active_trips = []
-    @@journeys = {}
-    @@found_car = nil
-  end
+  def check_journey_params
+    return if journey_params["id"].is_a?(Integer) && journey_params["people"].is_a?(Integer)
 
-  def create_cars
-    @cars = car_params
-    @all_cars_valid = true
-    @cars.each do |car|
-      if car_is_valid(car)
-        put_car_in_available_cars(car)
-      else
-        @all_cars_valid = false
-      end 
-    end
-  end
-
-  def car_is_valid(car)
-    if car["id"].is_a?(Integer) && car["seats"].is_a?(Integer) 
-      return true 
-    else
-      return false
-    end
-  end
-
-  def put_car_in_available_cars(car)
-    for i in 1..6
-      if car["seats"] == i
-        @@available_cars[i][car["id"]] = {
-            id: car["id"],
-            seats: car["seats"],
-            available_seats: car["seats"]
-          }
-      end
-    end
-  end
-
-  def find_car_for_group(journey)
-    @@riding = false
-    for i in (journey[:people]..6)
-      if @@available_cars[i].present? 
-        car = @@available_cars[i].first[1]
-        car_id = @@available_cars[i].first[0]
-
-        @@available_cars[i].delete(car_id)
-        
-        @new_available_seats = car[:available_seats] - journey[:people]
-        car[:available_seats] = @new_available_seats
-
-        @@available_cars[car[:available_seats]][car[:id]] = {
-          id: car[:id],
-          seats: car[:seats],
-          available_seats: car[:available_seats]
-        }
-        hash = {}
-        hash[journey[:id]] = {
-          car: car, 
-          journey: {
-            id:journey[:id], 
-            people: journey[:people]
-          }
-        }
-        update_car_seats_in_active_rides_hash(car)
-        @@active_trips << hash
-        @@riding = true
-        break
-      end
-    end
-    if @@riding == false
-      journey_queue(journey)
-    end
-  end
-
-  def journey_queue(journey)
-    for i in 1..6
-      if journey[:people] == i
-        @@queues[i -1] << {
-            id: journey[:id],
-            people: journey[:people],
-            time: Time.now
-          }
-      end
-    end
-  end
-
-  def update_car_seats_in_active_rides_hash(car)
-    @@active_trips.each do |active_trip_hash|
-      if active_trip_hash.values[0][:car][:id] == car[:id]
-        active_trip_hash.values[0][:car][:available_seats] = @new_available_seats
-      end
-    end
-  end
-
-  def generate_drop_off(group_id)
-    @@active_trips.each do |trip|
-      if trip.keys == [group_id]
-        @@found_car = trip[group_id][:car]
-        @journey = trip[group_id][:journey]
-        @@active_trips.delete_if {|h| h[group_id]}
-        if @@journeys[group_id]
-          @@journeys.delete(group_id)
-        end
-      end
-    end
-    @group_not_found = false
-    if @@found_car.nil?
-      @group_not_found = true
-    elsif @journey.nil?
-      @group_not_found = true
-    else
-      @@available_cars[@@found_car[:available_seats]].delete(@@found_car[:id])
-  
-      @new_available_seats = @@found_car[:available_seats] + @journey[:people]
-      @@found_car[:available_seats] = @new_available_seats
-
-      @@available_cars[@@found_car[:available_seats]][@@found_car[:id]] = {
-        id: @@found_car[:id],
-        seats: @@found_car[:seats],
-        available_seats: @@found_car[:available_seats]
-      }
-      update_car_seats_in_active_rides_hash(@@found_car)
-    end
+    render_400
   end
 
   def if_group_waiting_find_them_car    
@@ -242,7 +95,6 @@ class ApiController < ApplicationController
       end
     end
   end
-
 
   def check_queue    
     @queue_state = false
@@ -279,10 +131,22 @@ class ApiController < ApplicationController
   end
 
   def render_out_data_and_status_200
-    render json: { available_cars: @@available_cars, journeys: @@journeys, active_trips: @@active_trips, queues: @@queues }, status: 200
+    available_cars, journeys, active_trips, queues = ["available_cars", "journeys", "active_trips", "queues"].map do |key|
+     redis.get(key)
+    end
+
+    render  json: { available_cars: available_cars, journeys: journeys, active_trips: active_trips, queues: queues }, status: 200
   end
 
-  def render_400_status
+  %w[application/json application/x-www-form-urlencoded].each do |content_type|
+    define_method("ensure_#{content_type}_request") do
+      return if request.headers['Content-Type'] == content_type
+    
+      render_400
+    end
+  end
+
+  def render_400
     render status: 400
   end
 

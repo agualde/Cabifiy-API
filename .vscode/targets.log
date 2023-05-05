@@ -10,11 +10,12 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Sun Jun 19 13:31:50 2022
+# Make data base, printed on Fri May  5 14:22:52 2023
 
 # Variables
 
 # automatic
+ 
 <D = $(patsubst %/,%,$(dir $<))
 # environment
 RUBY_VERSION = ruby-3.0.3
@@ -23,13 +24,12 @@ RUBY_VERSION = ruby-3.0.3
 # environment
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
-LC_CTYPE = UTF-8
+HOMEBREW_NO_ANALYTICS = 1
 # environment
-VSCODE_LOG_NATIVE = false
+LC_CTYPE = UTF-8
 # environment
 NVM_INC = /Users/andresgualde/.nvm/versions/node/v16.13.1/include/node
 # automatic
- 
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
 rvm_path = /Users/andresgualde/.rvm
@@ -56,17 +56,13 @@ rvm_ruby_mode =
 # environment
 rvm_ruby_make = 
 # environment
-VSCODE_VERBOSE_LOGGING = true
-# environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
 rvm_proxy = 
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /var/folders/29/4zzj13gn6z772rj7cqnzzwcm0000gp/T/vscode-ipc-80067fcc-7ef0-42f3-bfe1-84f88f5cf30a.sock
-# environment
 VSCODE_CWD = /Users/andresgualde/code/agualde/api
 # environment
-rvm_pretty_print_flag = auto
+rvm_pretty_print_flag = 
 # environment
 PATH = /Users/andresgualde/.rvm/gems/ruby-3.0.3/bin:/Users/andresgualde/.rvm/gems/ruby-3.0.3@global/bin:/Users/andresgualde/.rvm/rubies/ruby-3.0.3/bin:/Users/andresgualde/.rvm/bin:/Users/andresgualde/.yarn/bin:/Users/andresgualde/.config/yarn/global/node_modules/.bin:/Users/andresgualde/.nvm/versions/node/v16.13.1/bin:/opt/homebrew/bin:/opt/homebrew/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:/opt/homebrew/bin
 # environment
@@ -82,8 +78,6 @@ rvm_only_path_flag =
 # environment
 rvm_gemstone_package_file = 
 # environment
-VSCODE_LOG_STACK = false
-# environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
 rvm_alias_expanded = 
@@ -94,13 +88,11 @@ rvm_sticky_flag =
 # environment
 rvm_user_flag = 
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.1fljCjVfbA/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.fTxzV7nelB/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
-DISPLAY = /private/tmp/com.apple.launchd.Bhik5PevOl/org.macosforge.xquartz:0
-# environment
-VSCODE_PIPE_LOGGING = true
+DISPLAY = /private/tmp/com.apple.launchd.Kax6N0WmOH/org.macosforge.xquartz:0
 # environment
 rvm_bin_path = /Users/andresgualde/.rvm/bin
 # environment
@@ -122,9 +114,11 @@ MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /De
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/andresgualde/Library/Application Support/Code/CachedData/30d9c6cd9483b2cc586687151bcbcd635f373630
+VSCODE_CODE_CACHE_PATH = /Users/andresgualde/Library/Application Support/Code/CachedData/97dec172d3256f8ca4bfb2143f3f76b503ca0534
 # environment
 LOGNAME = andresgualde
+# environment
+BUNDLER_EDITOR = code
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
@@ -160,7 +154,7 @@ USER = andresgualde
 # makefile
 .DEFAULT_GOAL := help
 # environment
-TERM_SESSION_ID = D1CB3E5D-A186-4472-A9AE-1278AD51AF07
+TERM_SESSION_ID = 6DC5B393-A593-4E94-8325-5F5BFBAFDD12
 # environment
 rvm_version = 1.29.12 (latest)
 # environment
@@ -180,7 +174,9 @@ TMPDIR = /var/folders/29/4zzj13gn6z772rj7cqnzzwcm0000gp/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/andresgualde/Library/Application Support/Code/1.68.1-main.sock
+VSCODE_IPC_HOOK = /Users/andresgualde/Library/Application Support/Code/1.74.3-main.sock
+# environment
+MallocNanoZone = 0
 # makefile
 MAKEFLAGS = Rrqp
 # environment
@@ -188,11 +184,11 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-TERM_PROGRAM_VERSION = 444
+TERM_PROGRAM_VERSION = 445
 # environment
 NVM_DIR = /Users/andresgualde/.nvm
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.9545634.9545640.89283939-8678-4A81-9025-A38FDC17F6E2
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.17047071.17047077.D925457C-A487-4ACF-8A5D-0723317660FC
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -214,9 +210,13 @@ rvm_silent_flag =
 # environment
 rvm_gemstone_url = 
 # environment
+EDITOR = code
+# environment
 PAGER = less
 # environment
 LC_ALL = C
+# environment
+PYENV_VIRTUALENV_DISABLE_PROMPT = 1
 # environment
 rvm_bin_flag = 
 # automatic
@@ -236,13 +236,13 @@ TERM = xterm-256color
 # environment
 rvm_use_flag = 
 # environment
-VSCODE_PID = 68648
+VSCODE_PID = 56963
 # environment
 MY_RUBY_HOME = /Users/andresgualde/.rvm/rubies/ruby-3.0.3
 # environment
 rvm_nightly_flag = 
 # variable set hash-table stats:
-# Load=113/1024=11%, Rehash=0, Collisions=10/137=7%
+# Load=113/1024=11%, Rehash=0, Collisions=11/137=8%
 
 # Pattern-specific Variable Values
 
@@ -335,6 +335,7 @@ dockerize: build
 #  Modification time never checked.
 #  File has not been updated.
 
+ 
 # files hash-table stats:
 # Load=10/1024=1%, Rehash=0, Collisions=0/28=0%
 # VPATH Search Paths
@@ -348,6 +349,6 @@ dockerize: build
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Jun 19 13:31:50 2022
+# Finished Make data base on Fri May  5 14:22:52 2023
 
  
