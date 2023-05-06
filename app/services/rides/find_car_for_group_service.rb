@@ -1,12 +1,13 @@
 module Rides
   class FindCarForGroupService
-    attr_accessor :journey, :cars, :trips
+    attr_accessor :journey, :cars, :trips, :redis_queues
     include Cache::Access
 
     def initialize(journey)
       @journey = journey
       @cars = available_cars
       @trips = active_trips
+      @redis_queues = queues
       @riding = false
     end
 
@@ -20,11 +21,11 @@ module Rides
           car_id = cars[i].first[0]
           car = cars[i].first[1]
           cars[i].delete(car_id)
-  
+
           new_available_seats = car["available_seats"] - journey[:people]
           car[:available_seats] = new_available_seats
-  
-          cars[car[:available_seats]][car[:id]] = {
+
+          cars[car[:available_seats]][car['id']] = {
             id: car['id'],
             seats: car['seats'],
             available_seats: car[:available_seats]
@@ -40,14 +41,13 @@ module Rides
             }
           }
 
-          UpdateCarSeatsInActiveRidesService.new(car, new_available_seats).call
+        ManageCarUpdates.new(car, new_available_seats).call
 
           trips << hash
           redis.set("available_cars", cars)
           redis.set("active_trips", trips)
           @riding = true
           break
-
         end
       end
 
@@ -64,6 +64,7 @@ module Rides
             }
         end
       end
+      redis.set("queues", redis_queues)
     end
   end
 end

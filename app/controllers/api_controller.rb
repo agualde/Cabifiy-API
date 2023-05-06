@@ -24,15 +24,16 @@ class ApiController < ApplicationController
   def drop_off
     service = Rides::DropOffService.new(group_id)
     service.call
-    return render status: 404 if @group_not_found
+    return render status: 404 if service.group_not_found?
       
     render_out_data_and_status_200
   end
 
   def locate
     service = Rides::LocateGroupFromCarService.new(group_id)
-    service.call
-    rescue => exception
+    data = service.call
+    render json: data[:car], status: data[:status]
+  rescue => exception
     render_400
   end
 
