@@ -1,6 +1,7 @@
 module Fleet
   class UpdateService
     attr_accessor :cars
+
     def initialize(cars)
       @cars = cars
     end

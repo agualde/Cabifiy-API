@@ -1,7 +1,6 @@
 module Rides
   class PutGroupInActiveJourneysService
-    include Cache::Instance
-    include Cache::Values
+    include Cache::Access
 
     attr_accessor :journey, :redis_journeys
 

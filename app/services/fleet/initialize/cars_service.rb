@@ -1,9 +1,8 @@
 module Fleet
   module Initialize
     class CarsService
-      include Cache::Instance
-      include Cache::Values
       attr_accessor :cars, :invalid_car, :redis_store
+      include Cache::Access
 
       def initialize(cars)
         @cars = cars

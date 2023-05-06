@@ -1,8 +1,7 @@
 module Rides
   class UpdateCarSeatsInActiveRidesService
     attr_accessor :car, :trips, :new_seat_count
-    include Cache::Instance
-    include Cache::Values
+    include Cache::Access
 
     def initialize(car, new_seat_count)
       @car = car

@@ -1,8 +1,7 @@
 module Rides
   class FindCarForGroupService
     attr_accessor :journey, :cars, :trips
-    include Cache::Instance
-    include Cache::Values
+    include Cache::Access
 
     def initialize(journey)
       @journey = journey
@@ -41,7 +40,7 @@ module Rides
             }
           }
 
-          Rides::UpdateCarSeatsInActiveRidesService.new(car, new_available_seats).call
+          UpdateCarSeatsInActiveRidesService.new(car, new_available_seats).call
 
           trips << hash
           redis.set("available_cars", cars)

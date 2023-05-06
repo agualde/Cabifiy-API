@@ -1,11 +1,10 @@
 module Rides
   class DropOffService
     attr_accessor :group
-    include Cache::Instance
+    include Cache::Access
     
     def initialize(group)
       @group = group
-      @active_trips = redis.get('active_trips')
     end
 
     def call
@@ -48,17 +47,56 @@ module Rides
           seats: @@found_car[:seats],
           available_seats: @@found_car[:available_seats]
         }
-        update_car_seats_in_active_rides_hash(@@found_car)
+        UpdateCarSeatsInActiveRidesService.new(car, new_available_seats).call
       end
     end
 
-    def update_car_seats_in_active_rides_hash(car)
-      active_trips.each do |active_trip_hash|
-        if active_trip_hash.values[0][:car][:id] == car[:id]
-          active_trip_hash.values[0][:car][:available_seats] = @new_available_seats
+    def if_group_waiting_find_them_car    
+      check_queue
+      if @queue_state 
+        wait_times =  @wait_list.collect { |x| x[:time] }
+        longest_time = wait_times.sort.first 
+        
+        @wait_list.each do |group|
+          
+          if group[:time] == longest_time
+            @longest_waiting_group_that_fits_in_car = group
+          end
+  
+          @@queues.each do |queue|
+            if queue.first == @longest_waiting_group_that_fits_in_car
+              queue.shift
+            end
+          end
+        end
+        find_car_for_group(@longest_waiting_group_that_fits_in_car)
+      end
+    end
+  
+    def update_found_car
+      @@active_trips.each do |trip| 
+        if @longest_waiting_group_that_fits_in_car
+          if trip[@longest_waiting_group_that_fits_in_car[:id]]
+            @@found_car = trip[@longest_waiting_group_that_fits_in_car[:id]][:car]
+          end
         end
       end
-      redis.set("active_trips", active_trips.to_json)
+    end
+
+    def check_queue    
+      @queue_state = false
+      @wait_list = []
+      @@queues.each do |queue|
+        unless @@found_car.nil?
+          if queue.first && queue.first[:people] <= @@found_car[:available_seats]
+            @queue_state = true
+            @wait_list << queue.first
+          end
+        end
+      end
+      if @wait_list.empty?
+        @running = false
+      end
     end
   end
 end
