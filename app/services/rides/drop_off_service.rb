@@ -1,7 +1,7 @@
 module Rides
   class DropOffService
     attr_accessor :group
-    include RedisInstance
+    include Cache::Instance
     
     def initialize(group)
       @group = group

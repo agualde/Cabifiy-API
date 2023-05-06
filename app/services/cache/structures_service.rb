@@ -1,6 +1,6 @@
 module Cache
   class StructuresService
-    include RedisInstance
+    include Cache::Instance
 
     def call
       %w[available_cars queues active_trips journeys found_car].each do |key|

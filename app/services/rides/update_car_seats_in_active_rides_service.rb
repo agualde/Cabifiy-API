@@ -1,7 +1,8 @@
 module Rides
   class UpdateCarSeatsInActiveRidesService
     attr_accessor :car, :trips, :new_seat_count
-    include RedisInstance
+    include Cache::Instance
+    include Cache::Values
 
     def initialize(car, new_seat_count)
       @car = car
@@ -11,8 +12,8 @@ module Rides
 
     def call
       trips.each do |active_trip_hash|
-        if active_trip_hash.values[0][:car][:id] == car[:id]
-          active_trip_hash.values[0][:car][:available_seats] = new_seat_count
+        if active_trip_hash.values[0]["car"]["id"] == car[:id]
+          active_trip_hash.values[0]["car"]["available_seats"] = new_seat_count
         end
       end
 

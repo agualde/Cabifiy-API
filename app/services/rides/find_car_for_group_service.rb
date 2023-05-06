@@ -1,7 +1,8 @@
 module Rides
   class FindCarForGroupService
     attr_accessor :journey, :cars, :trips
-    include RedisInstance
+    include Cache::Instance
+    include Cache::Values
 
     def initialize(journey)
       @journey = journey
@@ -17,9 +18,8 @@ module Rides
     def find_car_for_group
       for i in (journey[:people]..6)
         if cars[i].present? 
-          car = cars[i].first[1]
           car_id = cars[i].first[0]
-  
+          car = cars[i].first[1]
           cars[i].delete(car_id)
   
           new_available_seats = car["available_seats"] - journey[:people]

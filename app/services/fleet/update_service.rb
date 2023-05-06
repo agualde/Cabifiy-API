@@ -1,5 +1,5 @@
 module Fleet
-  class CarsService
+  class UpdateService
     attr_accessor :cars
     def initialize(cars)
       @cars = cars

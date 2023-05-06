@@ -1,5 +1,6 @@
 class ApiController < ApplicationController
-  include RedisInstance
+  include Cache::Values
+  include 
   before_action :"ensure_application/json_request", only: [:update, :create]
   before_action :"ensure_application/x-www-form-urlencoded_request", only: [:drop_off, :locate]
   before_action :check_journey_params, only: [:create]
@@ -9,7 +10,7 @@ class ApiController < ApplicationController
   end
 
   def update
-    service = Fleet::CarsService.new(car_params)
+    service = Fleet::UpdateService.new(car_params)
     service.call
 
     render_out_data_and_status_200
@@ -57,12 +58,6 @@ class ApiController < ApplicationController
   end
 
   private
-
-  def check_journey_params
-    return if journey_params["id"].is_a?(Integer) && journey_params["people"].is_a?(Integer)
-
-    render_400
-  end
 
   def if_group_waiting_find_them_car    
     check_queue
@@ -131,19 +126,7 @@ class ApiController < ApplicationController
   end
 
   def render_out_data_and_status_200
-    available_cars, journeys, active_trips, queues = ["available_cars", "journeys", "active_trips", "queues"].map do |key|
-     redis.get(key)
-    end
-
     render  json: { available_cars: available_cars, journeys: journeys, active_trips: active_trips, queues: queues }, status: 200
-  end
-
-  %w[application/json application/x-www-form-urlencoded].each do |content_type|
-    define_method("ensure_#{content_type}_request") do
-      return if request.headers['Content-Type'] == content_type
-    
-      render_400
-    end
   end
 
   def render_400

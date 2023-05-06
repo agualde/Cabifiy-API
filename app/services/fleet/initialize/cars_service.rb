@@ -1,12 +1,14 @@
 module Fleet
   module Initialize
     class CarsService
-      include RedisInstance
-      attr_accessor :cars, :invalid_car
+      include Cache::Instance
+      include Cache::Values
+      attr_accessor :cars, :invalid_car, :redis_store
 
       def initialize(cars)
         @cars = cars
         @invalid_car = false
+        @redis_store = available_cars
       end
 
       def call
@@ -33,16 +35,14 @@ module Fleet
       def put_car_in_available_cars(car)
         for i in 1..6
           if car["seats"] == i
-    
-            available_cars = redis.get("available_cars")
-    
-            available_cars[i][car["id"]] = {
+        
+            redis_store[i][car["id"]] = {
               id: car["id"],
               seats: car["seats"],
               available_seats: car["seats"]
             }
     
-            redis.set("available_cars", available_cars)
+            redis.set("available_cars", redis_store)
           end
         end
       end
