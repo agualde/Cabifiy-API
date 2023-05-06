@@ -1,7 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory `/Users/andresgualde/code/agualde/api'
-# this is not tested, but prepared in advance for you, Mac drivers
-awk -F ':.*###' '$0 ~ FS {printf "%15s%s\n", $1 ":", $2}' \
-		 Makefile | grep -v '@awk' | sort
-make: Leaving directory `/Users/andresgualde/code/agualde/api'
- 
