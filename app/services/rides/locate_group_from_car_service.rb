@@ -1,7 +1,7 @@
 module Rides
   class LocateGroupFromCarService
     attr_accessor :group, :trips, :redis_journeys, :group_waiting, :car
-    include Cache::Values
+    include Cache::Values::All
 
     def initialize(group)
       @group = group.to_s
@@ -26,8 +26,8 @@ module Rides
 
     def find_car_from_group
       trips.each do |trip|
-        if trip[group.to_s]
 
+        if trip[group.to_s]
           found_car = trip[group]['car']
 
           @car = {
@@ -39,7 +39,6 @@ module Rides
         if trip[group].nil?
           group_waiting = true if redis_journeys[group]
         end
-
         @car
       end
     end

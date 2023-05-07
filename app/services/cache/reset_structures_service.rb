@@ -1,5 +1,5 @@
 module Cache
-  class StructuresService
+  class ResetStructuresService
     include Cache::Instance
 
     def call

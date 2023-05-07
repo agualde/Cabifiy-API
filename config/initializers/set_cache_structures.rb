@@ -1,2 +1,2 @@
-service = Cache::StructuresService.new
+service = Cache::ResetStructuresService.new
 service.call

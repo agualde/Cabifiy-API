@@ -5,14 +5,16 @@ module Rides
     
     def initialize(group)
       @group = group.to_s
+
       @trips = active_trips 
+      @cars = available_cars
       @redis_journeys = journeys
       @redis_queues = queues
+
       @running = true
       @group_not_found = false
       @queue_state = false
       @found_car = nil
-      @cars = available_cars
       @wait_list = []
     end
 
@@ -62,7 +64,7 @@ module Rides
           available_seats: @found_car['available_seats']
         }
 
-        ManageCarUpdates.new(@found_car, new_available_seats).call
+        SeatsUpdateService.new(@found_car, new_available_seats, @journey).call
 
         redis.set('available_cars', cars)
         redis.set('journeys', redis_journeys)

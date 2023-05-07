@@ -1,9 +1,10 @@
 class ApiController < ApplicationController
-  include ApiTypeValidations
-  include CustomRenders
   before_action :"ensure_application/json_request", only: [:update, :create]
   before_action :"ensure_application/x-www-form-urlencoded_request", only: [:drop_off, :locate]
   before_action :check_journey_params, only: [:create]
+
+  include ApiTypeValidations
+  include CustomRenders
 
   def update
     service = Fleet::UpdateService.new(car_params)

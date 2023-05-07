@@ -7,7 +7,7 @@ module Fleet
     end
 
     def call
-      Cache::StructuresService.new.call
+      Cache::ResetStructuresService.new.call
       Fleet::Initialize::CarsService.new(cars).call
     end
   end
