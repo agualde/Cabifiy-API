@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fleet
   class UpdateService
     attr_accessor :cars

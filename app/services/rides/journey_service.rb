@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rides
   class JourneyService
     attr_accessor :journey
@@ -8,14 +10,13 @@ module Rides
 
     def call
       FindCarForGroupService.new(hash).call
-      PutGroupInActiveJourneysService.new(hash).call
     end
 
     def hash
       {
-        id: journey["id"],
-        people: journey["people"]
-        }
+        id: journey['id'],
+        people: journey['people']
+      }
     end
   end
 end

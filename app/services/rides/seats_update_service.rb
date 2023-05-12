@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rides
   class SeatsUpdateService
     attr_accessor :car, :new_available_seats, :journey

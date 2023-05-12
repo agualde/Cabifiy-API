@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cache
   class ResetStructuresService
     include Cache::Instance
@@ -7,11 +9,11 @@ module Cache
         redis.set(key, nil)
       end
 
-      redis.set("available_cars",[{},{},{},{},{},{},{}])
-      redis.set("queues",[[],[],[],[],[],[]])
-      redis.set("active_trips", [])
-      redis.set("journeys", {})
-      redis.set("found_car", nil)
+      redis.set('available_cars', [{}, {}, {}, {}, {}, {}, {}])
+      redis.set('queues', [[], [], [], [], [], []])
+      redis.set('active_trips', [])
+      redis.set('journeys', {})
+      redis.set('found_car', nil)
     end
   end
 end
