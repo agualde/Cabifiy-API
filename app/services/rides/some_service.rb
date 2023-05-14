@@ -4,6 +4,7 @@ module Rides
   class SomeService < BaseService
     attr_accessor :running, :queue_state, :wait_list, :longest_waiting_group_that_fits_in_car, :found_car
 
+
     def initialize(found_car)
       initialize_common_values
       @running = true

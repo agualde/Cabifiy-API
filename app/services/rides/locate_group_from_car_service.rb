@@ -15,7 +15,7 @@ module Rides
 
     def call
       find_car_from_group
-
+ 
       if found_car.present?
         { car: found_car, status: :ok }
       elsif group_waiting

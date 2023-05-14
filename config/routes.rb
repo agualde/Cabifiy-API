@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   get '/status', to: 'api#status'
 
   put '/cars', to: 'api#update'
-  
+
   post '/journey', to: 'api#create'
 
   post '/dropoff', to: 'api#drop_off'
 
   post '/locate', to: 'api#locate'
-  
+
   get '/cars', to: 'api#error'
   post '/cars', to: 'api#error'
   patch '/cars', to: 'api#error'
