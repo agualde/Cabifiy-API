@@ -40,22 +40,12 @@ class ApiController < ApplicationController
   end
 
   def drop_off
-    if request.content_type == "application/x-www-form-urlencoded"
-        group_id = params["ID"].to_i
-        generate_drop_off(group_id)
-        @running = true
-        while @running 
-          if_group_waiting_find_them_car
-          update_found_car
-        end
-        if @group_not_found
-          render status: 404
-        else
-        render_out_data_and_status_200
-        end
-    else
-      render_400_status
-    end
+    service = Rides::DropOffService.new(group_id)
+    return render status: 404 unless service.call
+
+    render_out_data_and_status_ok
+  rescue StandardError
+    render400
   end
 
   def locate
