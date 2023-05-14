@@ -2,22 +2,22 @@
 
 module Rides
   class LocateGroupFromCarService < BaseService
-    attr_accessor :group, :group_waiting, :car
-
     include Cache::Values::All
+    attr_accessor :group, :group_waiting, :found_car
 
     def initialize(group)
       initialize_common_values
       @group = group.to_s
       @group_waiting = false
-      @car = {}
+      @group_not_found = false
+      @found_car = {}
     end
 
     def call
       find_car_from_group
-
-      if @car.present?
-        { car: @car, status: :ok }
+ 
+      if found_car.present?
+        { car: found_car, status: :ok }
       elsif group_waiting
         { car: nil, status: :no_content }
       else
@@ -29,18 +29,20 @@ module Rides
 
     def find_car_from_group
       trips.each do |trip|
-        if trip[group]
-          found_car = trip[group]['car']
-
-          @car = {
-            id: found_car['id'],
-            seats: found_car['seats']
-          }
+        if trip[group].present?
+          @found_car = trip[group]['car'].slice('id', 'seats')
+        elsif trip[group].nil?
+          group_waiting?
+        else
+          @group_not_found = true
         end
+      end
+    end
 
-        if trip[group].nil?
-          @group_waiting = true if redis_journeys[group]
-          return nil
+    def group_waiting?
+      redis_queues.select do |queue|
+        @group_waiting = queue.any? do |group|
+          group['id'].to_s == @group
         end
       end
     end

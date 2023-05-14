@@ -11,5 +11,21 @@ module Rides
       @redis_journeys = journeys
       @redis_queues = queues
     end
+
+    def initialize_trips
+      @trips = active_trips
+    end
+
+    def initialize_cars
+      @cars = available_cars
+    end
+
+    def initialize_redis_journeys
+      @redis_journeys = journeys
+    end
+
+    def initialize_redis_queues
+      @redis_queues = queues
+    end
   end
 end

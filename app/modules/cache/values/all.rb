@@ -8,7 +8,6 @@ module Cache
       include Cache::Values::AvailableCars
       include Cache::Values::ActiveTrips
       include Cache::Values::Journeys
-      include Cache::Values::Journeys
       include Cache::Values::Queues
       include Cache::Values::FoundCar
     end

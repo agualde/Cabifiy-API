@@ -17,7 +17,7 @@ module Rides
     end
 
     def move_car_in_hash_and_update_seats
-      cars[available_seats].delete(id)
+      cars[available_seats].delete(id.to_s)
 
       cars[new_seat_count][id] = {
         id: id,
@@ -33,7 +33,7 @@ module Rides
     end
 
     def id
-      car['id'].to_s
+      car['id']
     end
 
     def seats

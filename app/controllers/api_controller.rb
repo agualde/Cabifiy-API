@@ -26,8 +26,12 @@ class ApiController < ApplicationController
 
   def drop_off
     service = Rides::DropOffService.new(group_id)
-    service.call
-    return render status: 404 if service.group_not_found
+    return render status: 404 unless service.call
+
+    render_out_data_and_status_ok
+  rescue StandardError
+    render400
+  end
 
     render_out_data_and_status_ok
   rescue StandardError
