@@ -4,7 +4,6 @@ module Rides
   class SomeService < BaseService
     attr_accessor :running, :queue_state, :wait_list, :longest_waiting_group_that_fits_in_car, :found_car
 
-
     def initialize(found_car)
       initialize_common_values
       @running = true
@@ -44,7 +43,7 @@ module Rides
         next unless longest_waiting_group_that_fits_in_car
 
         if trip[longest_waiting_group_that_fits_in_car['id']]
-          found_car = trip[longest_waiting_group_that_fits_in_car['id']]['car']
+          self.found_car = trip[longest_waiting_group_that_fits_in_car['id']]['car']
         end
       end
     end
@@ -54,11 +53,11 @@ module Rides
         next if found_car.nil?
         next unless queue.first && queue.first['people'] <= found_car['available_seats']
 
-        queue_state = true
+        self.queue_state = true
         wait_list << queue.first
       end
 
-      running = false if wait_list.empty?
+      self.running = false if wait_list.empty?
     end
   end
 end

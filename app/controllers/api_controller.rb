@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class ApiController < ApplicationController
+  include ApiTypeValidations
+  include CustomRenders
+
   before_action :'ensure_application/json_request', only: %i[update create]
   before_action :'ensure_application/x-www-form-urlencoded_request', only: %i[drop_off locate]
   before_action :check_journey_params, only: [:create]
-
-  include ApiTypeValidations
-  include CustomRenders
+  before_action :check_incoming_cars_params, only: [:update]
 
   def update
     service = Fleet::UpdateService.new(car_params)
@@ -27,11 +28,6 @@ class ApiController < ApplicationController
   def drop_off
     service = Rides::DropOffService.new(group_id)
     return render status: 404 unless service.call
-
-    render_out_data_and_status_ok
-  rescue StandardError
-    render400
-  end
 
     render_out_data_and_status_ok
   rescue StandardError

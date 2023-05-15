@@ -28,9 +28,7 @@ module Rides
       if found_car.nil? | journey.nil?
         false
       else
-        MoveGroup::OutOf::Journeys.new(group).call
-        MoveGroup::OutOf::AvailableCars.new(@found_car).call
-        MoveGroup::OutOf::ActiveTrips.new(group).call
+        trigger_services
 
         self.new_available_seats = found_car['available_seats'] + journey['people']
         SeatsUpdateService.new(found_car, new_available_seats, journey).call
@@ -41,6 +39,12 @@ module Rides
 
     def update_found_car
       found_car['available_seats'] = new_available_seats
+    end
+
+    def trigger_services
+      MoveGroup::OutOf::Journeys.new(group).call
+      MoveGroup::OutOf::AvailableCars.new(found_car).call
+      MoveGroup::OutOf::ActiveTrips.new(group).call
     end
   end
 end

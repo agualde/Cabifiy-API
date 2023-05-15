@@ -5,9 +5,11 @@ module ApiTypeValidations
   include CustomRenders
 
   def check_incoming_cars_params
-    return if journey_params['id'].is_a?(Integer) && journey_params['people'].is_a?(Integer)
+    car_params.each do |car|
+      next if car['id'].is_a?(Integer) && car['seats'].is_a?(Integer)
 
-    render400
+      render400
+    end
   end
 
   def check_journey_params
