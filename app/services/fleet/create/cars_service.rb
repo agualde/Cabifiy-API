@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Fleet
-  module Initialize
+  module Create
     class CarsService
       attr_accessor :cars, :invalid_car, :redis_store
 
