@@ -19,6 +19,7 @@ module Fleet
 
           put_car_in_available_cars(car)
         end
+        redis.set('available_cars', redis_store)
       end
 
       def failed?
@@ -37,13 +38,11 @@ module Fleet
         (1..6).each do |i|
           next unless car['seats'] == i
 
-          redis_store[i][car['id']] = {
-            id: car['id'],
-            seats: car['seats'],
-            available_seats: car['seats']
+          redis_store[i][car['id'].to_i] = {
+            id: car['id'].to_i,
+            seats: car['seats'].to_i,
+            available_seats: car['seats'].to_i
           }
-
-          redis.set('available_cars', redis_store)
         end
       end
     end
