@@ -12,8 +12,12 @@ module Rides
         end
 
         def call
-          redis_journeys.delete(group)
+          delete_group_from_journeys
           redis.set('journeys', redis_journeys)
+        end
+
+        def delete_group_from_journeys
+          redis_journeys.delete(group)
         end
       end
     end

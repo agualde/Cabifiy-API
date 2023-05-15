@@ -3,14 +3,12 @@
 module Rides
   module MoveGroup
     module InTo
-      class ActiveJourneysService
-        include Cache::Access
-
-        attr_accessor :journey, :redis_journeys
+      class ActiveJourneysService < BaseService
+        attr_accessor :journey
 
         def initialize(journey)
+          initialize_redis_journeys
           @journey = journey
-          @redis_journeys = journeys
         end
 
         def call

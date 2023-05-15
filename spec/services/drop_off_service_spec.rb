@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe Rides::GenerateDropOffService do
-  include_context 'redis usage'
+  include_context 'cache usage'
 
   subject { described_class.new(group).call }
   let(:group) { 1 }

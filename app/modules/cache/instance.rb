@@ -3,7 +3,7 @@
 module Cache
   module Instance
     def redis
-      Cache::RedisService.instance
+      Cache::InitializerService.instance
     end
   end
 end

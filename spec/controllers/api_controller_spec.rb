@@ -13,17 +13,17 @@ RSpec.describe ApiController do
 
     before do
       request.headers['CONTENT_TYPE'] = 'application/json'
-      allow(Fleet::Manage::UpdateService).to receive(:new).and_return(service)
+      allow(Fleet::Manage::InitializeService).to receive(:new).and_return(service)
       allow(service).to receive(:call)
     end
 
-    let(:service) { instance_double(Fleet::Manage::UpdateService) }
+    let(:service) { instance_double(Fleet::Manage::InitializeService) }
 
     it 'calls the UpdateService and renders success' do
       post :update, params: { _json: valid_params }
 
       expect(response).to have_http_status(:ok)
-      expect(Fleet::Manage::UpdateService).to have_received(:new).with(valid_params)
+      expect(Fleet::Manage::InitializeService).to have_received(:new).with(valid_params)
       expect(service).to have_received(:call)
     end
   end

@@ -12,8 +12,12 @@ module Rides
         end
 
         def call
-          trips.delete_if { |h| h[group] }
+          delete_active_trip
           redis.set('active_trips', trips)
+        end
+
+        def delete_active_trip
+          trips.delete_if { |h| h[group] }
         end
       end
     end

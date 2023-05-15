@@ -3,16 +3,14 @@
 module Rides
   module MoveGroup
     module InTo
-      class ActiveTripsService
-        attr_accessor :hash, :trips, :journey, :car
-
-        include Cache::Access
+      class ActiveTripsService < BaseService
+        attr_accessor :hash, :journey, :car
 
         def initialize(car, journey)
-          @hash = {}
           @car = car
           @journey = journey
-          @trips = active_trips
+          initialize_trips
+          @hash = {}
         end
 
         def call

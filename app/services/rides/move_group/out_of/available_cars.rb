@@ -7,7 +7,7 @@ module Rides
         attr_accessor :car
 
         def initialize(car)
-          initialize_common_values
+          initialize_cars
           @car = car
         end
 

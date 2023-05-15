@@ -2,7 +2,7 @@
 
 module Fleet
   module Manage
-    class UpdateService
+    class InitializeService
       attr_accessor :cars
 
       def initialize(cars)
@@ -10,8 +10,9 @@ module Fleet
       end
 
       def call
+        byebug
         Cache::ResetStructuresService.new.call
-        Fleet::Initialize::CarsService.new(cars).call
+        Fleet::Create::CarsService.new(cars).call
       end
     end
   end

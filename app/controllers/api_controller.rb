@@ -10,7 +10,7 @@ class ApiController < ApplicationController
   before_action :check_incoming_cars_params, only: [:update]
 
   def update
-    service = Fleet::Manage::UpdateService.new(car_params)
+    service = Fleet::Manage::InitializeService.new(car_params)
     service.call
     render_out_data_and_status_ok
   rescue StandardError

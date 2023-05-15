@@ -3,7 +3,7 @@
 require 'singleton'
 
 module Cache
-  class RedisService
+  class InitializerService
     include Singleton
     attr_reader :redis
 

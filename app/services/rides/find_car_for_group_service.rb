@@ -15,7 +15,7 @@ module Rides
     def call
       find_car_for_group
 
-      MoveGroup::InTo::QueueService.new(@journey).call unless @riding
+      MoveGroup::InTo::QueueService.new(journey).call unless @riding
     end
 
     def find_car_for_group
@@ -26,7 +26,7 @@ module Rides
         car = cars_that_fit_group.first[1]
         new_available_seats = car['available_seats'] - journey[:people]
 
-        Manage::ExecuteJourneyService.new(car, new_available_seats, journey).call
+        Manage::Execution::JourneyService.new(car, new_available_seats, journey).call
 
         @riding = true
         break

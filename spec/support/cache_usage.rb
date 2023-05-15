@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_context 'redis usage' do
+RSpec.shared_context 'cache usage' do
   include_context 'initialize common structures'
 
   include Cache::Instance
@@ -12,7 +12,7 @@ RSpec.shared_context 'redis usage' do
     redis.set('journeys', journeys)
     redis.set('active_trips', active_trips)
 
-    allow(Cache::RedisService).to receive(:instance).and_return(mock_redis)
+    allow(Cache::InitializerService).to receive(:instance).and_return(mock_redis)
     %w[available_cars active_trips journeys queues].each do |key|
       value = send(key)
       allow(mock_redis).to receive(:set).with(key, value)

@@ -3,21 +3,20 @@
 module Rides
   module MoveGroup
     module InTo
-      class QueueService
-        attr_accessor :journey, :redis_queues
-
-        include Cache::Access
+      class QueueService < BaseService
+        attr_accessor :journey
 
         def initialize(journey)
           @journey = journey
-          @redis_queues = queues
+          initialize_redis_queues
         end
 
         def call
-          journey_queue
+          put_group_in_correct_queue
+          redis.set('queues', redis_queues)
         end
 
-        def journey_queue
+        def put_group_in_correct_queue
           (1..6).each do |i|
             next unless journey[:people] == i
 
@@ -27,8 +26,6 @@ module Rides
               time: Time.now
             }
           end
-
-          redis.set('queues', redis_queues)
         end
       end
     end

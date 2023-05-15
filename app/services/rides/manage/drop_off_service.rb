@@ -2,13 +2,10 @@
 
 module Rides
   module Manage
-    class DropOffService < BaseService
-      attr_accessor :group, :group_not_found, :found_car
-
-      include Cache::Access
+    class DropOffService
+      attr_accessor :group
 
       def initialize(group)
-        initialize_common_values
         @group = group.to_s
       end
 
