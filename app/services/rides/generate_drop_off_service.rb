@@ -18,33 +18,36 @@ module Rides
     end
 
     def generate_drop_off
-      trips.each do |trip|
-        next unless trip.keys == [group]
-
-        self.found_car = trip[group]['car']
-        self.journey = trip[group]['journey']
-      end
+      find_journey_and_car
 
       if found_car.nil? | journey.nil?
         false
       else
         trigger_services
-
-        self.new_available_seats = found_car['available_seats'] + journey['people']
-        SeatsUpdateService.new(found_car, new_available_seats, journey).call
-        update_found_car
+        update_seats
         true
       end
     end
 
-    def update_found_car
+    def update_seats
+      new_available_seats = found_car['available_seats'] + journey['people']
       found_car['available_seats'] = new_available_seats
+      Fleet::Update::Seats::LaunchService.new(found_car, new_available_seats, journey).call
     end
 
     def trigger_services
       MoveGroup::OutOf::Journeys.new(group).call
       MoveGroup::OutOf::AvailableCars.new(found_car).call
       MoveGroup::OutOf::ActiveTrips.new(group).call
+    end
+
+    def find_journey_and_car
+      trips.each do |trip|
+        next unless trip.keys == [group]
+
+        self.found_car = trip[group]['car']
+        self.journey = trip[group]['journey']
+      end
     end
   end
 end

@@ -13,12 +13,12 @@ module Rides
 
     def call
       generate_drop_off_service = GenerateDropOffService.new(group)
-      # return false unless
-      generate_drop_off_service.call
-      return true
-      found_car = generate_drop_off_service.found_car
-      some_service = SomeService.new(found_car)
-      some_service.call while some_service.running
+      return false unless generate_drop_off_service.call
+
+      # found_car = generate_drop_off_service.found_car
+      # some_service = IfGroupWaitingFindThemACar.new(found_car)
+      # some_service.call while some_service.running
+      true
     end
   end
 end

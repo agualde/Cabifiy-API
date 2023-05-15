@@ -57,8 +57,9 @@ RSpec.describe ApiController do
     let(:group_id) { 1 }
 
     before do
+      request.headers['CONTENT_TYPE'] = 'application/x-www-form-urlencoded'
       allow(Rides::DropOffService).to receive(:new).and_return(service)
-      allow(service).to receive(:call)
+      allow(service).to receive(:call).and_return(true)
     end
 
     let(:service) { instance_double(Rides::DropOffService) }
@@ -66,7 +67,7 @@ RSpec.describe ApiController do
     it 'calls the DropOffService and renders success' do
       post :drop_off, params: { ID: group_id }
 
-      # expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:ok)
       expect(Rides::DropOffService).to have_received(:new).with(group_id)
       expect(service).to have_received(:call)
     end
@@ -74,10 +75,12 @@ RSpec.describe ApiController do
 
   describe 'POST #locate' do
     let(:group_id) { 1 }
+    let(:data) { { car: 'some car', status: 200 } }
 
     before do
+      request.headers['CONTENT_TYPE'] = 'application/x-www-form-urlencoded'
       allow(Rides::LocateGroupFromCarService).to receive(:new).and_return(service)
-      allow(service).to receive(:call)
+      allow(service).to receive(:call).and_return(data)
     end
 
     let(:service) { instance_double(Rides::LocateGroupFromCarService) }
@@ -85,7 +88,7 @@ RSpec.describe ApiController do
     it 'calls the LocateGroupFromCarService and renders success' do
       post :locate, params: { ID: group_id }
 
-      # expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:ok)
       expect(Rides::LocateGroupFromCarService).to have_received(:new).with(group_id)
       expect(service).to have_received(:call)
     end

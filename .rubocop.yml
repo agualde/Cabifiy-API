@@ -4,6 +4,9 @@ AllCops:
     - 'vendor/**/*'
     - 'config/unicorn.rb'
     - 'bin/*'
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
 
 Style/Documentation:
   Enabled: false

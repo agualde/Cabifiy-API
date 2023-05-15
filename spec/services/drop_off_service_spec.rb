@@ -3,17 +3,25 @@
 require 'rails_helper'
 
 describe Rides::GenerateDropOffService do
-  include Cache::Instance
-  include_context 'initialize common structures'
+  include_context 'redis usage'
 
   subject { described_class.new(group).call }
-  let(:mock_redis) { instance_double(Redis) }
+  let(:group) { 1 }
   let(:valid_car_id) { '1' }
   let(:valid_car_info) do
     {
       'id' => 1,
       'seats' => 3,
       'available_seats' => 0
+    }
+  end
+
+  let(:untouched_car_id) { '2' }
+  let(:untouched_car_info) do
+    {
+      'id' => 2,
+      'seats' => 4,
+      'available_seats' => 2
     }
   end
 
@@ -24,16 +32,23 @@ describe Rides::GenerateDropOffService do
     }
   end
 
+  let(:untouched_journey) do
+    {
+      'id' => 2,
+      'people' => 2
+    }
+  end
+
   let(:expected_available_cars) do
     [
       {},
       {},
-      {},
+      { untouched_car_id => untouched_car_info },
       {
-        1 => {
-          id: 1,
-          seats: 3,
-          available_seats: 3
+        '1' => {
+          'id' => 1,
+          'seats' => 3,
+          'available_seats' => 3
         }
       },
       {},
@@ -42,30 +57,24 @@ describe Rides::GenerateDropOffService do
     ]
   end
 
-  let(:expected_journeys) { {} }
-  let(:expected_active_trips) { [] }
+  let(:expected_journeys) { { untouched_journey['id'].to_s => untouched_journey } }
+  let(:expected_active_trips) do
+    [{ untouched_car_id => { 'car' => untouched_car_info, 'journey' => untouched_journey } }]
+  end
 
   before do
     insert_cart_into_active_cars(valid_car_id, valid_car_info, available_cars)
+    insert_cart_into_active_cars(untouched_car_id, untouched_car_info, available_cars)
+
     insert_journey_into_journeys(journey, journeys)
+    insert_journey_into_journeys(untouched_journey, journeys)
+
     insert_trips_into_active_trips(valid_car_id, valid_car_info, journey, active_trips)
-
-    redis.set('available_cars', available_cars)
-    redis.set('journeys', journeys)
-    redis.set('active_trips', active_trips)
-
-    allow(Cache::RedisService).to receive(:instance).and_return(mock_redis)
-    %w[available_cars active_trips journeys queues].each do |key|
-      value = send(key)
-      allow(mock_redis).to receive(:set).with(key, value)
-      allow(mock_redis).to receive(:get).with(key).and_return(value)
-    end
+    insert_trips_into_active_trips(untouched_car_id, untouched_car_info, untouched_journey, active_trips)
   end
 
   describe 'when generating a drop off' do
-    let(:group) { 1 }
     context 'when a group is in a journey'
-
     it 'updates available_cars in redis with the appropriate amount of seats' do
       subject
 

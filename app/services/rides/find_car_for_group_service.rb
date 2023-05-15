@@ -15,24 +15,32 @@ module Rides
     def call
       find_car_for_group
 
-      JourneyQueueService.new(@journey).call unless @riding
+      MoveGroup::InTo::QueueService.new(@journey).call unless @riding
     end
 
     def find_car_for_group
       (journey[:people]..6).each do |i|
-        next unless cars[i].present?
+        cars_that_fit_group = check_cars_index(i)
+        next unless cars_that_fit_group.present?
 
-        car = cars[i].first[1]
-
+        car = cars_that_fit_group.first[1]
         new_available_seats = car['available_seats'] - journey[:people]
 
-        MoveGroup::InTo::ActiveTripsService.new(car, journey).call
-        MoveGroup::InTo::ActiveJourneysService.new(journey).call
-        SeatsUpdateService.new(car, new_available_seats, journey).call
+        trigger_services(car, new_available_seats, journey)
 
         @riding = true
         break
       end
+    end
+
+    def check_cars_index(index)
+      cars[index]
+    end
+
+    def trigger_services(car, new_available_seats, journey)
+      MoveGroup::InTo::ActiveTripsService.new(car, journey).call
+      MoveGroup::InTo::ActiveJourneysService.new(journey).call
+      Fleet::Update::Seats::Launch.new(car, new_available_seats, journey).call
     end
   end
 end
