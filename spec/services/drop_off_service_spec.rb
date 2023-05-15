@@ -84,7 +84,7 @@ describe Rides::GenerateDropOffService do
       subject
 
       updated_active_trips = redis.get('active_trips')
-      expect(updated_active_trips).to eq(active_trips)
+      expect(updated_active_trips).to eq(expected_active_trips)
     end
   end
 end
