@@ -10,7 +10,7 @@ class ApiController < ApplicationController
   before_action :check_incoming_cars_params, only: [:update]
 
   def update
-    service = Fleet::UpdateService.new(car_params)
+    service = Fleet::Manage::UpdateService.new(car_params)
     service.call
     render_out_data_and_status_ok
   rescue StandardError
@@ -18,7 +18,7 @@ class ApiController < ApplicationController
   end
 
   def create
-    service = Rides::JourneyService.new(journey_params)
+    service = Rides::Prepare::JourneyService.new(journey_params)
     service.call
     render_out_data_and_status_ok
   rescue StandardError
@@ -26,7 +26,7 @@ class ApiController < ApplicationController
   end
 
   def drop_off
-    service = Rides::DropOffService.new(group_id)
+    service = Rides::Manage::DropOffService.new(group_id)
     return render status: 404 unless service.call
 
     render_out_data_and_status_ok

@@ -26,7 +26,7 @@ module Rides
         car = cars_that_fit_group.first[1]
         new_available_seats = car['available_seats'] - journey[:people]
 
-        trigger_services(car, new_available_seats, journey)
+        Manage::ExecuteJourneyService.new(car, new_available_seats, journey).call
 
         @riding = true
         break
@@ -35,12 +35,6 @@ module Rides
 
     def check_cars_index(index)
       cars[index]
-    end
-
-    def trigger_services(car, new_available_seats, journey)
-      MoveGroup::InTo::ActiveTripsService.new(car, journey).call
-      MoveGroup::InTo::ActiveJourneysService.new(journey).call
-      Fleet::Update::Seats::LaunchService.new(car, new_available_seats, journey).call
     end
   end
 end

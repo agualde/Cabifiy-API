@@ -13,17 +13,17 @@ RSpec.describe ApiController do
 
     before do
       request.headers['CONTENT_TYPE'] = 'application/json'
-      allow(Fleet::UpdateService).to receive(:new).and_return(service)
+      allow(Fleet::Manage::UpdateService).to receive(:new).and_return(service)
       allow(service).to receive(:call)
     end
 
-    let(:service) { instance_double(Fleet::UpdateService) }
+    let(:service) { instance_double(Fleet::Manage::UpdateService) }
 
     it 'calls the UpdateService and renders success' do
       post :update, params: { _json: valid_params }
 
       expect(response).to have_http_status(:ok)
-      expect(Fleet::UpdateService).to have_received(:new).with(valid_params)
+      expect(Fleet::Manage::UpdateService).to have_received(:new).with(valid_params)
       expect(service).to have_received(:call)
     end
   end
@@ -38,17 +38,17 @@ RSpec.describe ApiController do
 
     before do
       request.headers['CONTENT_TYPE'] = 'application/json'
-      allow(Rides::JourneyService).to receive(:new).and_return(service)
+      allow(Rides::Prepare::JourneyService).to receive(:new).and_return(service)
       allow(service).to receive(:call)
     end
 
-    let(:service) { instance_double(Rides::JourneyService) }
+    let(:service) { instance_double(Rides::Prepare::JourneyService) }
 
     it 'calls the JourneyService and renders success' do
       post :create, params: { api: valid_params }
 
       expect(response).to have_http_status(:ok)
-      expect(Rides::JourneyService).to have_received(:new).with(valid_params)
+      expect(Rides::Prepare::JourneyService).to have_received(:new).with(valid_params)
       expect(service).to have_received(:call)
     end
   end
@@ -58,17 +58,17 @@ RSpec.describe ApiController do
 
     before do
       request.headers['CONTENT_TYPE'] = 'application/x-www-form-urlencoded'
-      allow(Rides::DropOffService).to receive(:new).and_return(service)
+      allow(Rides::Manage::DropOffService).to receive(:new).and_return(service)
       allow(service).to receive(:call).and_return(true)
     end
 
-    let(:service) { instance_double(Rides::DropOffService) }
+    let(:service) { instance_double(Rides::Manage::DropOffService) }
 
     it 'calls the DropOffService and renders success' do
       post :drop_off, params: { ID: group_id }
 
       expect(response).to have_http_status(:ok)
-      expect(Rides::DropOffService).to have_received(:new).with(group_id)
+      expect(Rides::Manage::DropOffService).to have_received(:new).with(group_id)
       expect(service).to have_received(:call)
     end
   end
