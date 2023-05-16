@@ -2,9 +2,8 @@
 
 module Rides
   class FindCarForGroupService
-    attr_accessor :journey, :cars, :riding
-
     include Cache::Values::AvailableCars
+    attr_accessor :journey, :cars, :riding
 
     def initialize(journey)
       @journey = journey
@@ -19,15 +18,13 @@ module Rides
     end
 
     def find_car_for_group
-      (journey[:people]..6).each do |i|
+      (journey['people']..6).each do |i|
         cars_that_fit_group = check_cars_index(i)
         next unless cars_that_fit_group.present?
 
         car = cars_that_fit_group.first[1]
-        new_available_seats = car['available_seats'] - journey[:people]
-
+        new_available_seats = car['available_seats'] - journey['people']
         Manage::Execution::JourneyService.new(car, new_available_seats, journey).call
-
         @riding = true
         break
       end

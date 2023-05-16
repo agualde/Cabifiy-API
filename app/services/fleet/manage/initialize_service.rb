@@ -10,7 +10,6 @@ module Fleet
       end
 
       def call
-        byebug
         Cache::ResetStructuresService.new.call
         Fleet::Create::CarsService.new(cars).call
       end

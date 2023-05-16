@@ -7,7 +7,6 @@ module Fleet
         include Cache::Access
         attr_accessor :car, :trips, :new_seat_count, :journey
 
-
         def initialize(car, new_seat_count, journey)
           @car = car
           @trips = active_trips
@@ -20,9 +19,10 @@ module Fleet
             next unless active_trip_hash.values[0]['car']['id'] == car['id']
 
             active_trip_hash.values[0]['car']['available_seats'] = new_seat_count
-
-            redis.set('active_trips', trips)
+            break
           end
+
+          redis.set('active_trips', trips)
         end
       end
     end

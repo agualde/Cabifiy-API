@@ -12,9 +12,9 @@ module Rides
         end
 
         def call
-          redis_journeys[journey[:id]] = {
-            id: journey[:id],
-            people: journey[:people]
+          redis_journeys[journey['id'].to_s] = {
+            'id' => journey['id'],
+            'people' => journey['people']
           }
 
           redis.set('journeys', redis_journeys)

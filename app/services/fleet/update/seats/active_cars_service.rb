@@ -7,7 +7,6 @@ module Fleet
         include Cache::Access
         attr_accessor :car, :new_seat_count, :cars
 
-
         def initialize(car, new_seat_count)
           @car = car
           @cars = available_cars

@@ -14,11 +14,11 @@ module Rides
         end
 
         def call
-          hash[journey[:id]] = {
-            car: car,
-            journey: {
-              id: journey[:id],
-              people: journey[:people]
+          hash[journey['id'].to_s] = {
+            'car' => car,
+            'journey' => {
+              'id' => journey['id'],
+              'people' => journey['people']
             }
           }
 

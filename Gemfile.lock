@@ -176,7 +176,6 @@ GEM
       rubocop (>= 1.7.0, < 2.0)
     rubocop-rspec (2.11.1)
       rubocop (~> 1.19)
-
     ruby-progressbar (1.11.0)
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
@@ -190,6 +189,7 @@ GEM
       sprockets (>= 3.0.0)
     sqlite3 (1.4.2)
     thor (1.2.1)
+    timecop (0.9.6)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.1.0)
@@ -217,6 +217,7 @@ DEPENDENCIES
   shoulda-matchers (~> 4.0)
   spring
   sqlite3 (~> 1.4)
+  timecop (~> 0.9.6)
   tzinfo-data
 
 RUBY VERSION

@@ -13,9 +13,9 @@ module Rides
         generate_drop_off_service = GenerateDropOffService.new(group)
         return false unless generate_drop_off_service.call
 
-        # found_car = generate_drop_off_service.found_car
-        # some_service = IfGroupWaitingFindThemACar.new(found_car)
-        # some_service.call while some_service.running
+        found_car = generate_drop_off_service.found_car
+        some_service = IfGroupWaitingFindThemACar.new(found_car)
+        some_service.call
         true
       end
     end

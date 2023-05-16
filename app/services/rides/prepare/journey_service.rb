@@ -15,8 +15,8 @@ module Rides
 
       def hash
         {
-          id: journey['id'],
-          people: journey['people']
+          'id' => journey['id'],
+          'people' => journey['people']
         }
       end
     end

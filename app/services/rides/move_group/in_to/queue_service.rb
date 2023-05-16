@@ -18,11 +18,11 @@ module Rides
 
         def put_group_in_correct_queue
           (1..6).each do |i|
-            next unless journey[:people] == i
+            next unless journey['people'] == i
 
             redis_queues[i - 1] << {
-              id: journey[:id],
-              people: journey[:people],
+              id: journey['id'],
+              people: journey['people'],
               time: Time.now
             }
           end
