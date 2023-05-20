@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get '/status', to: 'api#status'
+  get '/status', to: 'status#status'
 
   put '/cars', to: 'api#update'
 

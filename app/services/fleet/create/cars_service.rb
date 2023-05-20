@@ -2,24 +2,23 @@
 
 module Fleet
   module Create
-    class CarsService
-      attr_accessor :cars, :invalid_car, :redis_store
+    class CarsService < BaseService
+      attr_accessor :incoming_cars, :invalid_car, :redis_store
 
-      include Cache::Access
-
-      def initialize(cars)
-        @cars = cars
+      def initialize(incoming_cars)
+        @incoming_cars = incoming_cars
         @invalid_car = false
-        @redis_store = available_cars
+        initialize_cars
       end
 
       def call
-        cars.each do |car|
+        incoming_cars.each do |car|
           @invalid_car = true unless car_is_valid(car)
 
           put_car_in_available_cars(car)
         end
-        redis.set('available_cars', redis_store)
+
+        Cache::UpdateValueService.new('available_cars', cars).call
       end
 
       def failed?
@@ -38,7 +37,7 @@ module Fleet
         (1..6).each do |i|
           next unless car['seats'] == i
 
-          redis_store[i][car['id'].to_i] = {
+          cars[i][car['id'].to_i] = {
             id: car['id'].to_i,
             seats: car['seats'].to_i,
             available_seats: car['seats'].to_i

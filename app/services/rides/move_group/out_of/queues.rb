@@ -17,7 +17,7 @@ module Rides
           shift_and_send_queue_group
           return unless longest_waiting_group_that_fits_in_car.present?
 
-          FindCarForGroupService.new(longest_waiting_group_that_fits_in_car.slice('id',
+          FindCarService.new(longest_waiting_group_that_fits_in_car.slice('id',
                                                                                   'people')).call
         end
 
@@ -30,7 +30,7 @@ module Rides
               next unless queue.first == longest_waiting_group_that_fits_in_car
 
               queue.shift
-              redis.set('queues', redis_queues)
+              Cache::UpdateValueService.new('queues', redis_queues).call
             end
           end
         end

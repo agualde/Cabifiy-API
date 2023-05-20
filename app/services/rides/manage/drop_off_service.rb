@@ -10,12 +10,12 @@ module Rides
       end
 
       def call
-        generate_drop_off_service = GenerateDropOffService.new(group)
-        return false unless generate_drop_off_service.call
+        execute_drop_off = Execute::DropOffService.new(group)
+        return false unless execute_drop_off.call
 
-        found_car = generate_drop_off_service.found_car
-        some_service = IfGroupWaitingFindThemACar.new(found_car)
-        some_service.call
+        found_car = execute_drop_off.found_car
+        manage_queues = Manage::Queues.new(found_car)
+        manage_queues.call
         true
       end
     end

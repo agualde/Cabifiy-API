@@ -19,10 +19,9 @@ module Fleet
             next unless active_trip_hash.values[0]['car']['id'] == car['id']
 
             active_trip_hash.values[0]['car']['available_seats'] = new_seat_count
-            break
           end
 
-          redis.set('active_trips', trips)
+          Cache::UpdateValueService.new('active_trips', trips).call
         end
       end
     end

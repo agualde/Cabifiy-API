@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Rides
-  module Prepare
+  module Manage
     class JourneyService
       attr_accessor :journey
 
@@ -10,14 +10,15 @@ module Rides
       end
 
       def call
-        FindCarForGroupService.new(hash).call
+        pre_processor = PreProcessor::Journey.new(hash)
+        return false unless pre_processor.valid?
+
+        Execute::FindCarService.new(hash).call
+        true
       end
 
       def hash
-        {
-          'id' => journey['id'],
-          'people' => journey['people']
-        }
+        journey.slice('id', 'people')
       end
     end
   end

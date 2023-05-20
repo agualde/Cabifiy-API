@@ -13,7 +13,7 @@ module Rides
 
         def call
           put_group_in_correct_queue
-          redis.set('queues', redis_queues)
+          Cache::UpdateValueService.new('queues', redis_queues).call
         end
 
         def put_group_in_correct_queue

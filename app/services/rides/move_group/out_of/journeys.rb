@@ -13,7 +13,7 @@ module Rides
 
         def call
           delete_group_from_journeys
-          redis.set('journeys', redis_journeys)
+          Cache::UpdateValueService.new('journeys', redis_journeys).call
         end
 
         def delete_group_from_journeys

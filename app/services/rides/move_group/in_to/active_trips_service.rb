@@ -23,7 +23,7 @@ module Rides
           }
 
           trips << hash
-          redis.set('active_trips', trips)
+          Cache::UpdateValueService.new('active_trips', trips).call
         end
       end
     end

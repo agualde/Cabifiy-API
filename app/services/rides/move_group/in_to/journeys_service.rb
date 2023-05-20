@@ -3,7 +3,7 @@
 module Rides
   module MoveGroup
     module InTo
-      class ActiveJourneysService < BaseService
+      class JourneysService < BaseService
         attr_accessor :journey
 
         def initialize(journey)
@@ -17,7 +17,7 @@ module Rides
             'people' => journey['people']
           }
 
-          redis.set('journeys', redis_journeys)
+          Cache::UpdateValueService.new('journeys', redis_journeys).call
         end
       end
     end

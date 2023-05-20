@@ -6,7 +6,6 @@ class ApiController < ApplicationController
 
   before_action :'ensure_application/json_request', only: %i[update create]
   before_action :'ensure_application/x-www-form-urlencoded_request', only: %i[drop_off locate]
-  before_action :check_journey_params, only: [:create]
   before_action :check_incoming_cars_params, only: [:update]
 
   def update
@@ -18,8 +17,8 @@ class ApiController < ApplicationController
   end
 
   def create
-    service = Rides::Prepare::JourneyService.new(journey_params)
-    service.call
+    service = Rides::Manage::JourneyService.new(journey_params)
+    return render400 unless service.call
     render_out_data_and_status_ok
   rescue StandardError
     render400
@@ -35,7 +34,7 @@ class ApiController < ApplicationController
   end
 
   def locate
-    service = Rides::LocateGroupFromCarService.new(group_id)
+    service = Rides::Manage::LocationService.new(group_id)
     data = service.call
     render json: data[:car], status: data[:status]
   rescue StandardError

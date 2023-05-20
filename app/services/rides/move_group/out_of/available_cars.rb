@@ -13,7 +13,7 @@ module Rides
 
         def call
           cars[available_seats].delete(id)
-          redis.set('available_cars', cars)
+          Cache::UpdateValueService.new('available_cars', cars).call
         end
 
         private

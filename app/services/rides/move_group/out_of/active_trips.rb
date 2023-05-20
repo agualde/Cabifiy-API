@@ -13,7 +13,7 @@ module Rides
 
         def call
           delete_active_trip
-          redis.set('active_trips', trips)
+          Cache::UpdateValueService.new('active_trips', trips).call
         end
 
         def delete_active_trip

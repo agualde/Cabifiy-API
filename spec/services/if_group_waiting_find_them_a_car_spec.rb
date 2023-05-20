@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe Rides::IfGroupWaitingFindThemACar do
+describe Rides::Manage::Queues do
   include_context 'cache usage'
   subject { described_class.new(valid_car_info).call }
 

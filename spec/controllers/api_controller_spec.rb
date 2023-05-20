@@ -38,17 +38,17 @@ RSpec.describe ApiController do
 
     before do
       request.headers['CONTENT_TYPE'] = 'application/json'
-      allow(Rides::Prepare::JourneyService).to receive(:new).and_return(service)
+      allow(Rides::Manage::JourneyService).to receive(:new).and_return(service)
       allow(service).to receive(:call)
     end
 
-    let(:service) { instance_double(Rides::Prepare::JourneyService) }
+    let(:service) { instance_double(Rides::Manage::JourneyService) }
 
     it 'calls the JourneyService and renders success' do
       post :create, params: { api: valid_params }
 
       expect(response).to have_http_status(:ok)
-      expect(Rides::Prepare::JourneyService).to have_received(:new).with(valid_params)
+      expect(Rides::Manage::JourneyService).to have_received(:new).with(valid_params)
       expect(service).to have_received(:call)
     end
   end
@@ -79,17 +79,17 @@ RSpec.describe ApiController do
 
     before do
       request.headers['CONTENT_TYPE'] = 'application/x-www-form-urlencoded'
-      allow(Rides::LocateGroupFromCarService).to receive(:new).and_return(service)
+      allow(Rides::Manage::LocationService).to receive(:new).and_return(service)
       allow(service).to receive(:call).and_return(data)
     end
 
-    let(:service) { instance_double(Rides::LocateGroupFromCarService) }
+    let(:service) { instance_double(Rides::Manage::LocationService) }
 
-    it 'calls the LocateGroupFromCarService and renders success' do
+    it 'calls the Manage::LocationService and renders success' do
       post :locate, params: { ID: group_id }
 
       expect(response).to have_http_status(:ok)
-      expect(Rides::LocateGroupFromCarService).to have_received(:new).with(group_id)
+      expect(Rides::Manage::LocationService).to have_received(:new).with(group_id)
       expect(service).to have_received(:call)
     end
   end
