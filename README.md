@@ -1,9 +1,8 @@
-# Car Pooling Service Challenge
+# Challenge
 
-Design/implement a system to manage car pooling.
+Designed to be a fully fucntioning Car Pooling API Service implementing Redis as the sole database. To make me think beyond the aids provided by Postgres, SQL, it implements no models and doesn't leverages ORM's like ActiveRecords. It is a feat of design and business logic compartamentalization. 
 
-I have built a car availability service that will be used
-to track the available seats in cars.
+# Car Pooling Service 
 
 Cars have a different amount of seats available, they can accommodate groups of
 up to 4, 5 or 6 people.
