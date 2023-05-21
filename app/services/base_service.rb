@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class BaseService
   include Cache::Values::All
   attr_accessor :trips, :cars, :redis_journeys, :redis_queues

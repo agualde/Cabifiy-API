@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PreProcessor
   class Journey
     attr_accessor :group
@@ -13,7 +15,7 @@ module PreProcessor
     def people_range_check
       people = group['people']
       return true if people.present? && people.is_a?(Integer) && people.between?(1, 6)
-      
+
       false
     end
 
@@ -24,6 +26,6 @@ module PreProcessor
       false
     end
 
-    alias :valid? :call
+    alias valid? call
   end
 end

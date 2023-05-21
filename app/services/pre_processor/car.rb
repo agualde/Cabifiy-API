@@ -1,11 +1,9 @@
+# frozen_string_literal: true
+
 module PreProcessor
   class Car
+    def initialize; end
 
-    def initialize
-    end
-
-    def call
-
-    end
+    def call; end
   end
 end

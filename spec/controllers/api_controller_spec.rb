@@ -39,10 +39,11 @@ RSpec.describe ApiController do
     before do
       request.headers['CONTENT_TYPE'] = 'application/json'
       allow(Rides::Manage::JourneyService).to receive(:new).and_return(service)
-      allow(service).to receive(:call)
+      allow(service).to receive(:call).and_return(true)
     end
 
     let(:service) { instance_double(Rides::Manage::JourneyService) }
+    let(:pre_processor) { instance_double(PreProcessor::Journey) }
 
     it 'calls the JourneyService and renders success' do
       post :create, params: { api: valid_params }

@@ -7,33 +7,52 @@ describe Rides::Manage::Queues do
   subject { described_class.new(valid_car_info).call }
 
   let(:time) { Time.zone.now }
-  # let(:group) { 1 }
   let(:valid_car_id) { '1' }
   let(:valid_car_info) do
     {
       'id' => 1,
-      'seats' => 3,
-      'available_seats' => 3
+      'seats' => 4,
+      'available_seats' => 4
     }
   end
 
   let(:journey) do
     {
       'id' => 1,
-      'people' => 2
+      'people' => 4
+    }
+  end
+
+  let(:queue_1) do
+    {
+      'id' => 2,
+      'people' => 2,
+      'time' => time
+    }
+  end
+
+  let(:queue_2) do
+    {
+      'id' => 3,
+      'people' => 2,
+      'time' => time + 3.seconds
+    }
+  end
+
+  let(:queue_3) do
+    {
+      'id' => 4,
+      'people' => 1,
+      'time' => time + 5.minutes
     }
   end
 
   let(:queues) do
     [
       [],
+      [queue_1, queue_2],
+      [queue_3],
       [],
-      [],
-      [{
-        'id' => 1,
-        'people' => 2,
-        'time' => time
-      }],
       [],
       []
     ]
@@ -41,14 +60,12 @@ describe Rides::Manage::Queues do
 
   let(:expected_available_cars) do
     [
+      { '1' => {
+        'id' => 1,
+        'seats' => 3,
+        'available_seats' => 0
+      } },
       {},
-      {
-        '1' => {
-          'id' => 1,
-          'seats' => 3,
-          'available_seats' => 1
-        }
-      },
       {},
       {},
       {},
@@ -57,16 +74,19 @@ describe Rides::Manage::Queues do
     ]
   end
 
-  let(:expected_journeys) { { journey['id'].to_s => journey } }
+  let(:expected_journeys) do
+    { queue_1['id'].to_s => queue_1.slice('id', 'people'), queue_2['id'].to_s => queue_2.slice('id', 'people') }
+  end
   let(:expected_active_trips) do
-    [{ valid_car_id.to_s => { 'car' => valid_car_info, 'journey' => journey } }]
+    [{ queue_1['id'].to_s => { 'car' => valid_car_info, 'journey' => queue_1.slice('id', 'people') } },
+     { queue_2['id'].to_s => { 'car' => valid_car_info, 'journey' => queue_2.slice('id', 'people') } }]
   end
 
   let(:expected_queues) do
     [
       [],
       [],
-      [],
+      [queue_3],
       [],
       [],
       []

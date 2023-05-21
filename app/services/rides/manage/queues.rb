@@ -3,6 +3,8 @@
 module Rides
   module Manage
     class Queues < BaseService
+      # Abstract logic of queue check and return of array ** to trigger ** boolean and re check queue after queue shift further in the process
+
       attr_accessor :running, :queue_state, :collect_groups, :found_car
 
       def initialize(found_car)
@@ -19,27 +21,19 @@ module Rides
       private
 
       def check_queues
-        return false if fetch_collect_groups
+        queue = fetch_valid_queue_candidates.compact
+        return false unless queue.compact.any?
 
-        MoveGroup::OutOf::Queues.new(found_car, collect_groups).call
-        retrigger_queue
+        MoveGroup::OutOf::Queues.new(found_car, queue).call
         true
       end
 
-      def retrigger_queue
-        self.collect_groups = []
-        check_queues
-      end
-
-      def fetch_collect_groups
-        redis_queues.each do |queue|
+      def fetch_valid_queue_candidates
+        redis_queues.map do |queue|
           next unless queue.first && queue.first['people'] <= found_car['available_seats']
 
-          collect_groups << queue.shift
-          Cache::UpdateValueService.new('queues', redis_queues).call
+          queue.first
         end
-
-        collect_groups.empty?
       end
     end
   end
