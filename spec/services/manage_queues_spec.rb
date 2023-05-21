@@ -62,7 +62,7 @@ describe Rides::Manage::Queues do
     [
       { '1' => {
         'id' => 1,
-        'seats' => 3,
+        'seats' => 4,
         'available_seats' => 0
       } },
       {},
@@ -120,6 +120,13 @@ describe Rides::Manage::Queues do
 
       updated_redis_trips = redis.get('active_trips')
       expect(updated_redis_trips).to eq(expected_active_trips)
+    end
+
+    it 'updates available cars' do
+      subject
+
+      updated_redis_available_cars = redis.get('available_cars')
+      expect(updated_redis_available_cars).to eq(expected_available_cars)
     end
   end
 end

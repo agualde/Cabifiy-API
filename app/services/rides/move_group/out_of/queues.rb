@@ -4,10 +4,11 @@ module Rides
   module MoveGroup
     module OutOf
       class Queues < BaseService
-        attr_accessor :group, :car
+        attr_accessor :group, :car, :car_copy
 
         def initialize(car, group)
           @car = car
+          @car_copy = nil
           @group = group
           initialize_common_values
         end
@@ -19,7 +20,7 @@ module Rides
 
           Cache::UpdateValueService.new('queues', redis_queues).call
           Execute::FindCarService.new(group.slice('id', 'people')).call
-          Manage::Queues.new(car).call
+          Manage::Queues.new(car_copy).call
         end
 
         private
@@ -28,7 +29,8 @@ module Rides
           redis_queues.each do |queue|
             next unless queue.first == group
 
-            car['available_seats'] = car['available_seats'] - queue.first['people']
+            self.car_copy = car.dup
+            self.car_copy['available_seats'] = car['available_seats'] - queue.first['people']
             queue.shift
           end
         end
