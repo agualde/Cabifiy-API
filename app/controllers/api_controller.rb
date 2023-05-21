@@ -10,18 +10,20 @@ class ApiController < ApplicationController
 
   def update
     service = Fleet::Manage::InitializeService.new(car_params)
-    service.call
+    return render_400 unless service.call
+
     render_out_data_and_status_ok
   rescue StandardError
-    render400
+    render_400
   end
 
   def create
     service = Rides::Manage::JourneyService.new(journey_params)
-    return render400 unless service.call
+    return render_400 unless service.call
+
     render_out_data_and_status_ok
   rescue StandardError
-    render400
+    render_400
   end
 
   def drop_off
@@ -30,7 +32,7 @@ class ApiController < ApplicationController
 
     render_out_data_and_status_ok
   rescue StandardError
-    render400
+    render_400
   end
 
   def locate
@@ -38,7 +40,7 @@ class ApiController < ApplicationController
     data = service.call
     render json: data[:car], status: data[:status]
   rescue StandardError
-    render400
+    render_400
   end
 
   private

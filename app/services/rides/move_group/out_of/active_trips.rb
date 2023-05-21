@@ -16,6 +16,8 @@ module Rides
           Cache::UpdateValueService.new('active_trips', trips).call
         end
 
+        private
+
         def delete_active_trip
           trips.delete_if { |h| h[group] }
         end

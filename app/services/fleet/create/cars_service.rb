@@ -13,8 +13,6 @@ module Fleet
 
       def call
         incoming_cars.each do |car|
-          @invalid_car = true unless car_is_valid(car)
-
           put_car_in_available_cars(car)
         end
 
@@ -26,12 +24,6 @@ module Fleet
       end
 
       private
-
-      def car_is_valid(car)
-        return false unless car['id'].is_a?(Integer) && car['seats'].is_a?(Integer)
-
-        true
-      end
 
       def put_car_in_available_cars(car)
         (1..6).each do |i|

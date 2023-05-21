@@ -8,7 +8,7 @@ module ApiTypeValidations
     car_params.each do |car|
       next if car['id'].is_a?(Integer) && car['seats'].is_a?(Integer)
 
-      render400
+      render_400
     end
   end
 
@@ -16,7 +16,7 @@ module ApiTypeValidations
     define_method("ensure_#{content_type}_request") do
       return if request.headers['Content-Type'] == content_type
 
-      render400
+      render_400
     end
   end
 end

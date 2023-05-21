@@ -17,6 +17,8 @@ module Rides
         MoveGroup::InTo::QueueService.new(journey).call unless riding
       end
 
+      private
+
       def find_car_for_group
         (journey['people']..6).each do |i|
           cars_that_fit_group = check_cars_index(i)

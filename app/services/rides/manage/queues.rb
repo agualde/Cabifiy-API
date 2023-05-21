@@ -3,8 +3,6 @@
 module Rides
   module Manage
     class Queues < BaseService
-      # Abstract logic of queue check and return of array ** to trigger ** boolean and re check queue after queue shift further in the process
-
       attr_accessor :running, :queue_state, :collect_groups, :found_car
 
       def initialize(found_car)
@@ -24,7 +22,8 @@ module Rides
         queue = fetch_valid_queue_candidates.compact
         return false unless queue.compact.any?
 
-        MoveGroup::OutOf::Queues.new(found_car, queue).call
+        group = Helpers::Queues::FindLongestWaitingGroup.new(queue).call
+        MoveGroup::OutOf::Queues.new(found_car, group).call
         true
       end
 

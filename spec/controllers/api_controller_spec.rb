@@ -14,7 +14,7 @@ RSpec.describe ApiController do
     before do
       request.headers['CONTENT_TYPE'] = 'application/json'
       allow(Fleet::Manage::InitializeService).to receive(:new).and_return(service)
-      allow(service).to receive(:call)
+      allow(service).to receive(:call).and_return(true)
     end
 
     let(:service) { instance_double(Fleet::Manage::InitializeService) }

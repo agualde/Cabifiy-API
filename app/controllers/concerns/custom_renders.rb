@@ -9,7 +9,7 @@ module CustomRenders
            status: 200
   end
 
-  def render400
+  def render_400
     render status: 400
   end
 end

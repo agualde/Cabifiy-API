@@ -10,14 +10,16 @@ module Rides
       end
 
       def call
-        pre_processor = PreProcessor::Journey.new(hash)
+        pre_processor = PreProcessor::Journey.new(group)
         return false unless pre_processor.valid?
 
-        Execute::FindCarService.new(hash).call
+        Execute::FindCarService.new(group).call
         true
       end
 
-      def hash
+      private
+
+      def group
         journey.slice('id', 'people')
       end
     end

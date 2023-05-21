@@ -16,6 +16,8 @@ module Rides
           Cache::UpdateValueService.new('journeys', redis_journeys).call
         end
 
+        private
+
         def delete_group_from_journeys
           redis_journeys.delete(group)
         end

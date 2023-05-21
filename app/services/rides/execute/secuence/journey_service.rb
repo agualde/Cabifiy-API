@@ -17,6 +17,8 @@ module Rides
           Fleet::Update::Seats::LaunchService.new(car, new_available_seats, group).call
         end
 
+        private
+
         def new_available_seats
           car['available_seats'] - group['people']
         end

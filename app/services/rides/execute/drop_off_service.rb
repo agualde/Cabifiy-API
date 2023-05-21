@@ -3,22 +3,22 @@
 module Rides
   module Execute
     class DropOffService < BaseService
-      attr_accessor :group, :found_car, :group_not_found, :journey, :new_available_seats, :car
+      attr_accessor :group, :found_car, :journey, :car
 
       def initialize(group)
         initialize_common_values
         @group = group.to_s
-        @group_not_found = false
         @found_car = nil
         @car = nil
         @journey = nil
-        @new_available_seats = nil
       end
 
       def call
         generate_drop_off
         update_found_car
       end
+
+      private
 
       def generate_drop_off
         find_journey_and_car
