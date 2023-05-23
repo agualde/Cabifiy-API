@@ -41,8 +41,8 @@ module Rides
 
       def group_waiting?
         redis_queues.select do |queue|
-          @group_waiting = queue.any? do |group|
-            group['id'].to_s == @group
+          @group_waiting = queue.any? do |wait_group|
+            wait_group['id'].to_s == group
           end
         end
       end

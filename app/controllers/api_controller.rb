@@ -6,7 +6,6 @@ class ApiController < ApplicationController
 
   before_action :'ensure_application/json_request', only: %i[update create]
   before_action :'ensure_application/x-www-form-urlencoded_request', only: %i[drop_off locate]
-  before_action :check_incoming_cars_params, only: [:update]
 
   def update
     service = Fleet::Manage::InitializeService.new(car_params)
@@ -38,6 +37,8 @@ class ApiController < ApplicationController
   def locate
     service = Rides::Manage::LocationService.new(group_id)
     data = service.call
+    return render status: 400 unless data.present?
+
     render json: data[:car], status: data[:status]
   rescue StandardError
     render_400

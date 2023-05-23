@@ -1,4 +1,6 @@
 # frozen_string_literal: true
 
-service = Cache::ResetStructuresService.new
-service.call
+Rails.application.reloader.to_prepare do
+  service = Cache::ResetStructuresService.new
+  service.call
+end

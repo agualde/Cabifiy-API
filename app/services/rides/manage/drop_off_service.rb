@@ -10,6 +10,9 @@ module Rides
       end
 
       def call
+        pre_processor = PreProcessor::GroupId.new(group)
+        return false unless pre_processor.valid?
+
         execute_drop_off = Execute::DropOffService.new(group)
         return false unless execute_drop_off.call
 
