@@ -6,14 +6,14 @@ module Rides
       attr_accessor :group
 
       def initialize(group)
-        @group = group.to_s
+        @group = group
       end
 
       def call
         pre_processor = PreProcessor::GroupId.new(group)
         return false unless pre_processor.valid?
 
-        execute_drop_off = Execute::DropOffService.new(group)
+        execute_drop_off = Execute::DropOffService.new(group.to_s)
         return false unless execute_drop_off.call
 
         found_car = execute_drop_off.found_car

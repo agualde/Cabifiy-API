@@ -9,7 +9,7 @@ module CustomRenders
            status: 200
   end
 
-  def render_400
-    render status: 400
+  def render_400(messase)
+    render json: { message: messase}, status: 400
   end
 end

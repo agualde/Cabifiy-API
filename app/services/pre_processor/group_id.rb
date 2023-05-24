@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PreProcessor
-  class Journey
+  class GroupId
     attr_accessor :group_id
 
     def initialize(group_id)
@@ -13,7 +13,7 @@ module PreProcessor
     end
 
     def id_uniqueness_check
-      return true if group_id.present? && people.is_a?(Integer)
+      return true if group_id.present? && group_id.is_a?(Integer)
 
       false
     end
