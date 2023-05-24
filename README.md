@@ -1,6 +1,6 @@
 # Challenge
 
-Designed to be a fully fucntioning Car Pooling API Service implementing Redis as the sole database. To make me think beyond the aids provided by Postgres, SQL, it implements no models and doesn't leverages ORM's like ActiveRecords. It is a feat of design and business logic compartamentalization. 
+Designed to be a fully fucntioning Car Pooling API Service implementing Redis as the sole database. It implements no models and doesn't leverages ORM's like ActiveRecords. It is a feat of design and business logic compartamentalization. 
 
 # Car Pooling Service 
 
