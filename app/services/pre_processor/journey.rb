@@ -9,7 +9,7 @@ module PreProcessor
     end
 
     def call
-      people_range_check && id_uniqueness_check
+      people_range_check && id_check
     end
 
     def people_range_check
@@ -19,7 +19,7 @@ module PreProcessor
       false
     end
 
-    def id_uniqueness_check
+    def id_check
       id = group['id']
       return true if id.present? && id.is_a?(Integer)
 

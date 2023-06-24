@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   patch '/cars', to: 'api#error'
   delete '/cars', to: 'api#error'
 
+  post '/login', to: 'api#update'
+  get '/dashboard', to: 'api#update'
+
   get '/journey', to: 'api#error'
   put '/journey', to: 'api#error'
   patch '/journey', to: 'api#error'
