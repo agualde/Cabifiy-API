@@ -8,12 +8,10 @@ class ApiController < ApplicationController
   before_action :'ensure_application/x-www-form-urlencoded_request', only: %i[drop_off locate]
 
   def update
-    # service = Fleet::Manage::InitializeService.new(car_params)
-    # return render_400("Car parameters not valid") unless service.call
+    service = Fleet::Manage::InitializeService.new(car_params)
+    return render_400("Car parameters not valid") unless service.call
 
-    # render_out_data_and_status_ok
-    byebug
-    render json: {token: 'hello from rails! ;)'}
+    render_out_data_and_status_ok
   rescue StandardError => e
     render_400(e.message)
   end
